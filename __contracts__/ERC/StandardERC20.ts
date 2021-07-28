@@ -1,5 +1,7 @@
 export const StandardERC20 = (
-  solver: string
+  solver: string,
+  tokenName: string,
+  decimals: number
 ): string => `
 // SPDX-License-Identifier: MIT
 
@@ -150,7 +152,7 @@ abstract contract Context {
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IERC20-approve}.
  */
-contract ERC20 is Context, IERC20, IERC20Metadata {
+contract ${tokenName} is Context, IERC20, IERC20Metadata {
   mapping(address => uint256) private _balances;
 
   mapping(address => mapping(address => uint256)) private _allowances;
@@ -203,7 +205,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     * {IERC20-balanceOf} and {IERC20-transfer}.
     */
   function decimals() public view virtual override returns (uint8) {
-    return 18;
+    return ${decimals};
   }
 
   /**
