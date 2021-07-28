@@ -1,5 +1,8 @@
 import Web3 from 'web3'
 import { panic } from './utils'
+import { config as dotenvConfig } from 'dotenv'
+
+dotenvConfig()
 
 if (!process.env.ETH_NODE_URL)
   throw panic('ETH_NODE_URL undefined')
