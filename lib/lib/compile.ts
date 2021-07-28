@@ -7,6 +7,12 @@ export interface ISolcExtract {
   evmBytecode: string
 }
 
+/**
+ * Helper function to return the necessary data from the solc
+ * output.
+ * @param coutputs 
+ * @returns 
+ */
 export function extractFromSolcOutput(
   coutputs: ISolcOutputContracts
 ): ISolcExtract {
