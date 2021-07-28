@@ -1,11 +1,30 @@
 import { solc } from '../solc'
 import { untyped } from '../utils'
 
+export interface ISolcExtract {
+  ABI: untyped
+  metadata: string
+  evmBytecode: string
+}
+
+export function extractFromSolcOutput(
+  coutputs: ISolcOutputContracts
+): ISolcExtract {
+  const contractFile = Object.keys(coutputs)[0]
+  const contractName = Object.keys(coutputs[contractFile])[0]
+
+  return {
+    ABI: coutputs[contractFile][contractName].abi,
+    metadata: coutputs[contractFile][contractName].metadata,
+    evmBytecode: coutputs[contractFile][contractName].evm.bytecode.object
+  }
+}
+
 /**
  * Compiles a Solidity contract using solc. 
  * @param input 
  */
-export async function compile(input: ISolcInputs): Promise<ISolcOutputs> {
+export function compile(input: ISolcInputs): ISolcOutputs {
   return JSON.parse(
     solc.compile(JSON.stringify(input))
   )
@@ -68,6 +87,7 @@ export interface ISolcOutputContracts {
               returnSlots?: number
             }
           }
+          object: string
         }
 
       }
