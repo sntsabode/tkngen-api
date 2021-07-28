@@ -1,2 +1,3 @@
 lib/solc.js* linguist-vendored
 chain-fork.js* linguist-vendored
+tests/__accounts__.js* linguist-vendored
