@@ -2,9 +2,10 @@ import * as DeployMod from '../../lib/lib/deploy'
 import * as CompileMod from '../../lib/lib/compile'
 import { assert, expect } from 'chai'
 import { web3 } from '../../lib/web3'
+const accounts = require('../__accounts__')
 
-const privateKey = '0x304e050f221865e00bd2325473b46a9a72b2bc665212aec2d0087d2dc1172b63'
-const account = '0xa542fa9b5c22925a848b2e1d6fcef56db4b2192f'
+const account = accounts.account
+const privateKey = accounts.privateKey
 
 const contract = `
 pragma solidity ^0.8.6;
@@ -79,8 +80,29 @@ describe(
     expect(receipt).to.have.property('cumulativeGasUsed')
     expect(receipt).to.have.property('contractAddress')
     assert.isNotEmpty(receipt.contractAddress)
-    expect(receipt).to.have.property('logs')
     expect(receipt).to.have.property('status')
     expect(receipt).to.have.property('logsBloom')
+
+    const testContractInstance = new web3.eth.Contract(solcExtract.ABI, receipt.contractAddress)
+    const shouldBe_one = await testContractInstance.methods.x().call()
+    assert.strictEqual(shouldBe_one, '1')
+  })
+
+  it(
+  'Should call the quickDeploy function',
+  async () => {
+    const res = await DeployMod.quickDeploy(
+      contractWithConstructor,
+      'Test', [10],
+      web3, account
+    )
+
+    expect(res).to.have.property('receipt')
+    expect(res).to.have.property('extract')
+
+    const testContractInstance = new web3.eth.Contract(res.extract.ABI, res.receipt.contractAddress)
+    const shouldBe_one = await testContractInstance.methods.x().call()
+
+    assert.strictEqual(shouldBe_one, '1')
   })
 })
