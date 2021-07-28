@@ -16,7 +16,7 @@ describe(
 'deploy module test suite',
 () => {
   it(
-  'Should call the ',
+  'Should call the makeRawTransaction function',
   async () => {
     const inputs = CompileMod.constructSolcInputs('Test.sol', contract)
     const outputs = await CompileMod.compile(inputs)
