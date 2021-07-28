@@ -1,6 +1,7 @@
 import chaiHttp from 'chai-http'
 import chai, { assert, expect } from 'chai'
 import { app } from '../lib/app'
+import { web3 } from '../lib/web3'
 const accounts = require('./__accounts__')
 
 chai.use(chaiHttp)
@@ -23,11 +24,15 @@ describe(
   it(
   'Should call the /ERC-20/Standard endpoint',
   async () => {
+    const tokenName = 'TestERC20'
+    const tokenDecimals = 18
+    const tokenSymbol = 'TST'
+
     const res = await server.post('/ERC-20/Standard').type('form')
     .send({
-      tokenName: 'TestERC20',
-      tokenDecimals: 18,
-      tokenSymbol: 'TST',
+      tokenName,
+      tokenDecimals,
+      tokenSymbol,
       fromAccount: account,
       accountPassword: privateKey
     })
@@ -50,5 +55,20 @@ describe(
     expect(res.body.data.solc).to.have.property('evmBytecode')
     assert.isNotEmpty(res.body.data.solc.ABI)
     assert.isNotEmpty(res.body.data.solc.evmBytecode)
+
+    const tokenInstance = new web3.eth.Contract(
+      res.body.data.solc.ABI,
+      res.body.data.receipt.contractAddress
+    )
+
+    const [name, sym, decimals] = await Promise.all([
+      tokenInstance.methods.name().call(),
+      tokenInstance.methods.symbol().call(),
+      tokenInstance.methods.decimals().call()
+    ])
+
+    assert.strictEqual(name, tokenName)
+    assert.strictEqual(sym, tokenSymbol)
+    assert.strictEqual(decimals, tokenDecimals.toString())
   })
 })
