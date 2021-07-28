@@ -1,7 +1,7 @@
 import * as DeployMod from '../../lib/lib/deploy'
 import * as CompileMod from '../../lib/lib/compile'
 import { assert, expect } from 'chai'
-//import { assert, expect } from 'chai'
+import { web3 } from '../../lib/web3'
 
 const privateKey = '0xb864a8fb7cd9675b905b8c7ad831a649ef3759d0a88ae3f253abf51872fceb44'
 const account = '0xb8a859e749e843c45ec1b755a5221596be7dd6e9'
@@ -29,7 +29,7 @@ describe(
       from: account,
       data: solcExtract.evmBytecode,
       gas
-    }, privateKey)
+    }, privateKey, web3)
     
     expect(receipt).to.have.property('transactionHash')
     expect(receipt).to.have.property('transactionIndex')
@@ -53,7 +53,7 @@ describe(
     const output = CompileMod.compile(inputs).contracts
     const solcExtract = CompileMod.extractFromSolcOutput(output)
 
-    const receipt = await DeployMod.deploy(account, privateKey, solcExtract)
+    const receipt = await DeployMod.deploy(account, privateKey, solcExtract, web3)
     
     // Returns 'signAndSendTransaction' under the hood 
     // no need to assert the values again

@@ -1,7 +1,7 @@
-import { web3 } from '../web3'
 import { ISolcExtract } from './compile'
 import { TransactionReceipt } from 'web3-eth'
 import { untyped } from '../utils'
+import Web3 from 'web3'
 
 export interface IDeployedContract {
   ABI: untyped
@@ -11,7 +11,8 @@ export interface IDeployedContract {
 export async function deploy(
   fromAccount: string,
   privateKey: string,
-  extract: ISolcExtract
+  extract: ISolcExtract,
+  web3: Web3
 ): Promise<TransactionReceipt> {
   const gas = 2000000
 
@@ -20,12 +21,13 @@ export async function deploy(
     data: extract.evmBytecode,
     gas
   }
-  return signAndSendTransaction(rawTX, privateKey)
+  return signAndSendTransaction(rawTX, privateKey, web3)
 }
 
 export async function signAndSendTransaction(
   transaction: IRawTransaction,
-  privateKey: string
+  privateKey: string,
+  web3: Web3
 ): Promise<TransactionReceipt> {
   const signedTransaction = await web3.eth.accounts.signTransaction(
     transaction, privateKey
