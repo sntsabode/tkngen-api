@@ -3,13 +3,27 @@ import * as CompileMod from '../../lib/lib/compile'
 import { assert, expect } from 'chai'
 import { web3 } from '../../lib/web3'
 
-const privateKey = '0xb864a8fb7cd9675b905b8c7ad831a649ef3759d0a88ae3f253abf51872fceb44'
-const account = '0xb8a859e749e843c45ec1b755a5221596be7dd6e9'
+const privateKey = '0x304e050f221865e00bd2325473b46a9a72b2bc665212aec2d0087d2dc1172b63'
+const account = '0xa542fa9b5c22925a848b2e1d6fcef56db4b2192f'
 
 const contract = `
 pragma solidity ^0.8.6;
 
 contract Test {
+  function x() public returns(uint) { return 1; }
+}
+`.trim()
+
+const contractWithConstructor = `
+pragma solidity ^0.8.6;
+
+contract Test {
+  uint256 immutable y;
+
+  constructor(uint256 _y) public {
+    y = _y;
+  }
+
   function x() public returns(uint) { return 1; }
 }
 `.trim()
@@ -49,14 +63,24 @@ describe(
   it(
   'Should call the deploy function',
   async () => {
-    const inputs = CompileMod.constructSolcInputs('Test.sol', contract)
-    const output = CompileMod.compile(inputs).contracts
-    const solcExtract = CompileMod.extractFromSolcOutput(output)
+    const inputs = CompileMod.constructSolcInputs('Test.sol', contractWithConstructor)
+    const output = CompileMod.compile(inputs)
+    const solcExtract = CompileMod.extractFromSolcOutput(output.contracts)
 
-    const receipt = await DeployMod.deploy(account, privateKey, solcExtract, web3)
+    const receipt = await DeployMod.deploy(solcExtract, web3, ['2'], account)
     
-    // Returns 'signAndSendTransaction' under the hood 
-    // no need to assert the values again
-    assert(receipt)
+    expect(receipt).to.have.property('transactionHash')
+    expect(receipt).to.have.property('transactionIndex')
+    expect(receipt).to.have.property('blockHash')
+    expect(receipt).to.have.property('blockNumber')
+    expect(receipt).to.have.property('from')
+    expect(receipt).to.have.property('to')
+    expect(receipt).to.have.property('gasUsed')
+    expect(receipt).to.have.property('cumulativeGasUsed')
+    expect(receipt).to.have.property('contractAddress')
+    assert.isNotEmpty(receipt.contractAddress)
+    expect(receipt).to.have.property('logs')
+    expect(receipt).to.have.property('status')
+    expect(receipt).to.have.property('logsBloom')
   })
 })
