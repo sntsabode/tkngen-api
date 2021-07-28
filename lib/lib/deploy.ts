@@ -9,19 +9,27 @@ export interface IDeployedContract {
 }
 
 export async function deploy(
-  fromAccount: string,
-  privateKey: string,
   extract: ISolcExtract,
-  web3: Web3
+  web3: Web3,
+  arguments_: untyped[],
+  fromAccount: string
 ): Promise<TransactionReceipt> {
-  const gas = 2000000
+  const gasPrice = await web3.eth.getGasPrice()
+    .catch(e => { throw e })
 
-  const rawTX = {
-    from: fromAccount,
+  const pendingDeployment = new web3.eth.Contract(extract.ABI).deploy({
     data: extract.evmBytecode,
-    gas
-  }
-  return signAndSendTransaction(rawTX, privateKey, web3)
+    arguments: arguments_
+  }).send({
+    from: fromAccount,
+    gas: 1500000,
+    gasPrice
+  })
+
+  return new Promise((resolve, reject) => {
+    pendingDeployment.on('error', err => reject(err))
+    pendingDeployment.on('receipt', receipt => resolve(receipt))
+  })
 }
 
 export async function signAndSendTransaction(
