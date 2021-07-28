@@ -8,6 +8,18 @@ describe(
     require('./lib/deploy.test')
   })
 
+  describe(
+  '__contracts__ test suite',
+  () => {
+    require('./__contracts__/ERC.test')
+  })
+
+  describe(
+  'tkngen-api server tests',
+  () =>
+    require('./server.test')
+  )
+
   after(() => {
     // Web3 keeps an active connection causing the process not
     // to exit.
