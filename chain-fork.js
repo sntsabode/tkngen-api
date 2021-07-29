@@ -1,6 +1,8 @@
 /* eslint-disable */
 const ganache = require('ganache-cli')
 const Web3 = require('web3')
+const { writeFileSync, readFileSync } = require('fs')
+const { resolve } = require('path')
 require('dotenv').config()
 
 if (!process.env.ETH_NODE_URL) throw new Error(
@@ -35,6 +37,16 @@ const line = '===================='
 
 server.listen(PORT, onboot)
 
+const accountsFile = (
+  privateKey,
+  account
+) => `
+module.exports = {
+  privateKey: '${privateKey}',
+  account: '${account}'
+}
+`.trim()
+
 function onboot(err, blockchain) {
   if (err) {
     console.error(`Error booting ganache: ${err}`)
@@ -43,6 +55,17 @@ function onboot(err, blockchain) {
 
   let count = 1
   console.log(`\nAccounts\n${line}\n`)
+
+  const path = resolve('tests/__accounts__.js')
+
+  const [accountAddress, testAccount] = Object.entries(blockchain.accounts)[0]
+  const accounts = readFileSync(path).toString()
+  console.log(accounts)
+
+  writeFileSync(path, accountsFile(
+    '0x' + testAccount.secretKey.toString('hex'),
+    accountAddress
+  ))
 
   for (let [key, value] of Object.entries(blockchain.accounts)) {
     const address = '0x' + value.secretKey.toString('hex')
