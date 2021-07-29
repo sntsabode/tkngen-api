@@ -1,9 +1,10 @@
 import * as DeployMod from '../../lib/lib/deploy'
 import * as CompileMod from '../../lib/lib/compile'
 import { assert, expect } from 'chai'
-import { web3 } from '../../lib/web3'
+import { Web3Fac } from '../../lib/web3'
 const accounts = require('../__accounts__')
 
+const web3 = Web3Fac('MAINNET_FORK')
 const account = accounts.account
 const privateKey = accounts.privateKey
 

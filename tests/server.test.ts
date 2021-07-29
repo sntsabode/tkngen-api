@@ -1,7 +1,7 @@
 import chaiHttp from 'chai-http'
 import chai, { assert, expect } from 'chai'
 import { app } from '../lib/app'
-import { web3 } from '../lib/web3'
+import { Web3Fac } from '../lib/web3'
 const accounts = require('./__accounts__')
 
 chai.use(chaiHttp)
@@ -10,6 +10,8 @@ const account = accounts.account
 const privateKey = accounts.privateKey
 
 const server = chai.request(app).keepOpen()
+
+const web3 = Web3Fac('MAINNET_FORK')
 
 describe(
 'tkngen-api server test suite',
@@ -34,7 +36,8 @@ describe(
       tokenDecimals,
       tokenSymbol,
       fromAccount: account,
-      accountPassword: privateKey
+      accountPassword: privateKey,
+      network: 'MAINNET_FORK'
     })
 
     expect(res).to.have.status(200)
