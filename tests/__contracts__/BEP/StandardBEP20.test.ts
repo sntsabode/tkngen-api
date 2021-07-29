@@ -1,15 +1,15 @@
 import { compile } from '../../../lib/lib/compile'
 import { StandardBEP20 } from '../../../__contracts__/BEP/StandardBEP20'
 import { constructSolcInputs } from '../../../lib/lib/compile'
-import { assert, expect } from 'chai'
-import { Web3Fac } from '../../../lib/web3'
+import { assert, /* expect */ } from 'chai'
+//import { Web3Fac } from '../../../lib/web3'
 import { config } from 'dotenv'
 config()
 
-const web3 = Web3Fac('BINANCESMARTCHAIN_TEST')
+//const web3 = Web3Fac('BINANCESMARTCHAIN_TEST')
 
 //const address = process.env.BNC_TEST_ACC!
-const privateKey = process.env.BNC_TEST_PVTK!
+//const privateKey = process.env.BNC_TEST_PVTK!
 
 describe(
 'StandardBEP20 contract test suite',
@@ -29,7 +29,9 @@ describe(
     done()
   })
 
-  it(
+  // See `server.test.ts`
+
+  /*it(
   'Should compile and deploy the StandardBEP20 contract',
   async () => {
     const TokenName = 'TestToken'
@@ -72,5 +74,5 @@ describe(
     assert.strictEqual(name, TokenName)
     assert.strictEqual(sym, TokenSym)
     assert.strictEqual(decimals, TokenDecimals.toString())
-  })
+  })*/
 })
