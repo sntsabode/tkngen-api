@@ -12,6 +12,7 @@ describe(
   '__contracts__ test suite',
   () => {
     require('./__contracts__/ERC.test')
+    require('./__contracts__/BEP.test')
   })
 
   describe(
