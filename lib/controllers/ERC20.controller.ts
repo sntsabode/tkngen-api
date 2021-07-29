@@ -13,12 +13,8 @@ export async function StandardERC20Route(
   req: req, res: res
 ): Promise<res> {
   const {
-    tokenName,
-    tokenDecimals,
-    tokenSymbol,
-    fromAccount,
-    accountPassword,
-    network
+    tokenName, tokenDecimals, tokenSymbol,
+    fromAccount, accountPassword, network
   } = req.body
 
   const web3 = Web3Fac(network)
@@ -27,10 +23,10 @@ export async function StandardERC20Route(
     msg: 'You\'ve entered an unsupported network'
   })
   
-  const ERC20Contract = StandardERC20('0.8.6', tokenName, tokenDecimals)
-
   try {
-    const outputs = compile(constructSolcInputs(tokenName, ERC20Contract))
+    const outputs = compile(constructSolcInputs(
+      tokenName, StandardERC20('0.8.6', tokenName, tokenDecimals)
+    ))
 
     const ABI = outputs.contracts[tokenName][tokenName].abi
     const evmBytecode = outputs.contracts[tokenName][tokenName].evm.bytecode.object
@@ -41,17 +37,15 @@ export async function StandardERC20Route(
       AccountUnlockDuration
     )
 
-    const receipt = await deploy({
-      ABI,
-      metadata: '',
-      evmBytecode
-    }, web3, [tokenName, tokenSymbol], fromAccount)
-
     return res.status(200).send({
       success: true,
       msg: 'Successfuly deployed your ERC20 Token!',
       data: {
-        receipt,
+        receipt: (await deploy({
+          ABI,
+          metadata: '',
+          evmBytecode
+        }, web3, [tokenName, tokenSymbol], fromAccount)),
         solc: { ABI, evmBytecode }
       }
     })
