@@ -34,7 +34,7 @@ const Web3Instances = {
   ),
 
   BINANCESMARTCHAIN_TEST: () => new Web3(
-    new Web3.providers.WebsocketProvider(process.env.BNSC_TEST_NODE_URL!)
+    'https://data-seed-prebsc-1-s1.binance.org:8545'
   )
 }
 
