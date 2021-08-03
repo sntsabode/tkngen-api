@@ -2,20 +2,27 @@ import {
   Request as req,
   Response as res
 } from 'express'
+import { validationResult } from 'express-validator'
 import { StandardERC20 } from '../../__contracts__/ERC/StandardERC20'
 import { compile, constructSolcInputs } from '../lib/compile'
 import { deploy } from '../lib/deploy'
 import { Web3Fac } from '../web3'
+import { IRequestBody } from './__req.body__'
 
 const AccountUnlockDuration = 10000
 
 export async function StandardERC20Route(
   req: req, res: res
 ): Promise<res> {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) return res.status(400).send(
+    { success: false, err: errors }
+  )
+
   const {
     tokenName, tokenDecimals, tokenSymbol,
-    fromAccount, accountPassword, network
-  } = req.body
+    totalSupply, privateKey, network
+  } = <IRequestBody>req.body
 
   const web3 = Web3Fac(network)
   if (!web3) return res.status(400).send({
@@ -24,16 +31,17 @@ export async function StandardERC20Route(
   })
   
   try {
+    const fromAccount = web3.eth.accounts.privateKeyToAccount(privateKey)
     const outputs = compile(constructSolcInputs(
-      tokenName, StandardERC20('0.8.6', tokenName, tokenDecimals)
+      tokenName, StandardERC20('0.8.6', tokenName, tokenDecimals, totalSupply)
     ))
 
     const ABI = outputs.contracts[tokenName][tokenName].abi
     const evmBytecode = outputs.contracts[tokenName][tokenName].evm.bytecode.object
 
     await web3.eth.personal.unlockAccount(
-      fromAccount,
-      accountPassword,
+      fromAccount.address,
+      fromAccount.privateKey,
       AccountUnlockDuration
     )
 
@@ -45,7 +53,7 @@ export async function StandardERC20Route(
           ABI,
           metadata: '',
           evmBytecode
-        }, web3, [tokenName, tokenSymbol], fromAccount)),
+        }, web3, [tokenName, tokenSymbol], fromAccount.address)),
         solc: { ABI, evmBytecode }
       }
     })

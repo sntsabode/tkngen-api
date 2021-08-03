@@ -2,17 +2,24 @@ import {
   Request as req,
   Response as res
 } from 'express'
+import { validationResult } from 'express-validator'
 import { StandardBEP20 } from '../../__contracts__/BEP/StandardBEP20'
 import { compile, constructSolcInputs } from '../lib/compile'
 import { Web3Fac } from '../web3'
+import { IRequestBody } from './__req.body__'
 
 export async function StandardBEP20Route(
   req: req, res: res
 ): Promise<res> {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) return res.status(400).send(
+    { success: false, err: errors }
+  )
+
   const {
     tokenName, tokenDecimals, tokenSymbol,
     totalSupply, privateKey, network
-  } = req.body
+  } = <IRequestBody>req.body
 
   if (
     network !== 'BINANCESMARTCHAIN'
@@ -22,19 +29,17 @@ export async function StandardBEP20Route(
     msg: 'You\'ve entered an unsupported network'
   })
 
-  const web3 = Web3Fac(network)
-
   try {
+    const web3 = Web3Fac(network)
     const outputs = compile(constructSolcInputs(
       tokenName, StandardBEP20(
         '0.8.6', tokenName, tokenSymbol, 
-        tokenDecimals, totalSupply
+        tokenDecimals, <unknown>totalSupply as string
       )
     ))
 
     const ABI = outputs.contracts[tokenName][tokenName].abi
     const evmBytecode = outputs.contracts[tokenName][tokenName].evm.bytecode.object
-
     const account = web3.eth.accounts.privateKeyToAccount(privateKey)
 
     return res.status(200).send({
