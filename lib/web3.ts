@@ -7,7 +7,7 @@ dotenvConfig()
 if (!process.env.ETH_NODE_URL)
   throw panic('ETH_NODE_URL undefined')
 
-export type Web3Instance =
+export type SupportedNetwork =
   | 'MAINNET'
   | 'MAINNET_FORK'
   | 'KOVAN'
@@ -40,4 +40,4 @@ const Web3Instances = {
 
 /* eslint-enable */
 
-export const Web3Fac = (instance: Web3Instance): Web3 => Web3Instances[instance]()
+export const Web3Fac = (instance: SupportedNetwork): Web3 => Web3Instances[instance]()
