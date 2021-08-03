@@ -1,7 +1,8 @@
 export const StandardERC20 = (
   solver: string,
   tokenName: string,
-  decimals: number
+  decimals: number,
+  totalSupply: number
 ): string => `
 // SPDX-License-Identifier: MIT
 
@@ -157,7 +158,7 @@ contract ${tokenName} is Context, IERC20, IERC20Metadata {
 
   mapping(address => mapping(address => uint256)) private _allowances;
 
-  uint256 private _totalSupply;
+  uint256 private ${totalSupply};
 
   string private _name;
   string private _symbol;
