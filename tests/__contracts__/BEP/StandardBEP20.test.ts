@@ -1,3 +1,6 @@
+/*
+yarn run mocha -r ts-node/register tests/__contracts__/BEP/StandardBEP20.test.ts --timeout 99999
+*/
 import { compile } from '../../../lib/lib/compile'
 import { StandardBEP20 } from '../../../__contracts__/BEP/StandardBEP20'
 import { constructSolcInputs } from '../../../lib/lib/compile'
@@ -18,7 +21,7 @@ describe(
   'Should compile the StandardBEP20 contract',
   done => {
     const inputs = constructSolcInputs('TestBEP20', StandardBEP20(
-      '0.8.6', 'TestBEP20', 'BEP', 18, (100 * 10**18).toString()
+      '0.8.6', 'TestBEP20', 'BEP', 8, (100 * 10**8).toString()
     ))
 
     const outputs = compile(inputs)

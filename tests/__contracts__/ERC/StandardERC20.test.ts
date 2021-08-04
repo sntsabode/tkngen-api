@@ -1,3 +1,6 @@
+/*
+yarn run mocha -r ts-node/register tests/__contracts__/ERC/StandardERC20.test.ts --timeout 99999
+*/
 import { compile } from '../../../lib/lib/compile'
 import { StandardERC20 } from '../../../__contracts__/ERC/StandardERC20'
 import { constructSolcInputs } from '../../../lib/lib/compile'
@@ -9,13 +12,17 @@ const accounts = require('../../__accounts__')
 const web3 = Web3Fac('MAINNET_FORK')
 const account = accounts.account
 
+const totalSupply = web3.utils.toWei('100000')
+
 describe(
 'StandardERC20 contract test suite',
 () => {
   it(
   'Should compile the StandardERC20 contract',
   done => {
-    const inputs = constructSolcInputs('TestERC20', StandardERC20('0.8.6', 'TestERC20', 18))
+    const inputs = constructSolcInputs('TestERC20',
+      StandardERC20('0.8.6', 'TestERC20', 18, totalSupply)
+    )
     const outputs = compile(inputs)
 
     assert.isNotEmpty(outputs.contracts.TestERC20.TestERC20.evm.bytecode.object)
@@ -29,7 +36,9 @@ describe(
   async () => {
     const TokenDecimals = 8
 
-    const inputs = constructSolcInputs('TestERC20', StandardERC20('0.8.6', 'TestERC20', TokenDecimals))
+    const inputs = constructSolcInputs('TestERC20',
+      StandardERC20('0.8.6', 'TestERC20', TokenDecimals, totalSupply)
+    )
     const outputs = compile(inputs)
 
     const ABI = outputs.contracts.TestERC20.TestERC20.abi
