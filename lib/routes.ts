@@ -21,4 +21,10 @@ router.post(
   BEP20Controllers.StandardBEP20Route
 )
 
+router.post(
+  '/BEP-20/MintableBurnable',
+  RequestValidation,
+  BEP20Controllers.MintableBurnableBEP20Route
+)
+
 export { router }
