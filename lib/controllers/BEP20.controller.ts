@@ -8,6 +8,7 @@ import { StandardBEP20 } from '../../__contracts__/BEP/StandardBEP20'
 import { compile, constructSolcInputs, ISolcInputs } from '../lib/compile'
 import { Web3Fac } from '../web3'
 import { IRequestBody } from './__req.body__'
+import { convertToWei, SupportedDecimals } from '../utils'
 
 export async function StandardBEP20Route(
   req: req, res: res
@@ -27,7 +28,9 @@ export async function StandardBEP20Route(
   }, constructSolcInputs(
     tokenName, StandardBEP20(
       '0.8.6', tokenName, tokenSymbol, 
-      tokenDecimals, totalSupply
+      tokenDecimals, convertToWei(totalSupply.toString(),
+        (tokenDecimals.toString() as SupportedDecimals)
+      ).toString()
     )
   ), res)
 }
@@ -50,7 +53,9 @@ export async function MintableBurnableBEP20Route(
   }, constructSolcInputs(
     tokenName, MintableBurnableBEP20(
       '0.8.6', tokenName, tokenSymbol,
-      tokenDecimals, totalSupply
+      tokenDecimals, convertToWei(totalSupply.toString(),
+        (tokenDecimals.toString() as SupportedDecimals)
+      ).toString()
     )
   ), res)
 }

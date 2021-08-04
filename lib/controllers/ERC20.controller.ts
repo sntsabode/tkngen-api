@@ -8,6 +8,7 @@ import { compile, constructSolcInputs } from '../lib/compile'
 import { deploy } from '../lib/deploy'
 import { Web3Fac } from '../web3'
 import { IRequestBody } from './__req.body__'
+import { convertToWei, SupportedDecimals } from '../utils'
 
 const AccountUnlockDuration = 10000
 
@@ -33,7 +34,9 @@ export async function StandardERC20Route(
   try {
     const fromAccount = web3.eth.accounts.privateKeyToAccount(privateKey)
     const outputs = compile(constructSolcInputs(
-      tokenName, StandardERC20('0.8.6', tokenName, tokenDecimals, totalSupply)
+      tokenName, StandardERC20('0.8.6', tokenName, tokenDecimals, convertToWei(
+        totalSupply.toString(), (tokenDecimals.toString() as SupportedDecimals)
+      ).toString())
     ))
 
     const ABI = outputs.contracts[tokenName][tokenName].abi
