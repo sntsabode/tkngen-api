@@ -1,3 +1,6 @@
+/*
+yarn run mocha -r ts-node/register tests/server.test.ts --timeout 99999
+*/
 import chaiHttp from 'chai-http'
 import chai, { assert, expect } from 'chai'
 import { app } from '../lib/app'
@@ -8,10 +11,12 @@ require('dotenv').config()
 
 chai.use(chaiHttp)
 
-const account = accounts.account
+//const account = accounts.account
 const privateKey = accounts.privateKey
 
 const server = chai.request(app).keepOpen()
+
+const network = 'MAINNET_FORK'
 
 function deployRouteAssertions(res: any) {
   expect(res).to.have.status(200)
@@ -62,16 +67,17 @@ describe(
   it(
   'Should call the /ERC-20/Standard endpoint',
   async () => {
-    const tokenName = 'TestERC20'
-    const tokenDecimals = 18
-    const tokenSymbol = 'TST'
+    const [
+      tokenName, tokenDecimals, tokenSymbol, totalSupply
+    ] = ['TestERC20', 18, 'ERT', 10000]
+
+    const requestBody = {
+      tokenName, tokenDecimals, tokenSymbol,
+      totalSupply, privateKey, network
+    }
 
     const res = await server.post('/ERC-20/Standard').type('form')
-    .send({
-      tokenName, tokenDecimals, tokenSymbol,
-      fromAccount: account, accountPassword: privateKey,
-      network: 'MAINNET_FORK'
-    })
+    .send(requestBody)
 
     deployRouteAssertions(res)
     const [name, sym, decimals] = await interfaceWithDeployedTokenContract(
@@ -85,11 +91,36 @@ describe(
   })
 
   it(
+  'Should call the /BEP-20/MintableBurnable endpoint',
+  async () => {
+    const [
+      tokenName, tokenDecimals, tokenSymbol, totalSupply
+    ] = ['TestBurnableToken', 6, 'TBT', 100000]
+    const privateKey = process.env.BNC_TEST_PVTK!
+
+    const res = await server.post('/BEP-20/MintableBurnable').type('form')
+    .send({
+      tokenName, tokenDecimals, tokenSymbol,
+      totalSupply, privateKey, network: 'BINANCESMARTCHAIN_TEST'
+    })
+
+    deployRouteAssertions(res)
+    
+    const [name, sym, decimals] = await interfaceWithDeployedTokenContract(
+      res, Web3Fac('BINANCESMARTCHAIN_TEST')
+    )
+
+    assert.strictEqual(name, tokenName)
+    assert.strictEqual(sym, tokenSymbol)
+    assert.strictEqual(decimals, tokenDecimals.toString())
+  })
+
+  it(
   'Should call the /BEP-20/Standard endpoint',
   async () => {
     const [
       tokenName, tokenDecimals, tokenSymbol, totalSupply
-    ] = ['PopiToken', 6, 'POPI', (100000 * 10**6)]
+    ] = ['PopiToken', 6, 'POPI', 100000]
     const privateKey = process.env.BNC_TEST_PVTK!
 
     const res = await server.post('/BEP-20/Standard').type('form')
@@ -97,8 +128,6 @@ describe(
       tokenName, tokenDecimals, tokenSymbol,
       totalSupply, privateKey, network: 'BINANCESMARTCHAIN_TEST'
     })
-
-    console.log(res.body.data.receipt)
 
     deployRouteAssertions(res)
     
