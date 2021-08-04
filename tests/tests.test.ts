@@ -21,6 +21,12 @@ describe(
     require('./server.test')
   )
 
+  describe(
+  'utils test suite',
+  () =>
+    require('./utils.test')
+  )
+
   after(() => {
     // Web3 keeps an active connection causing the process not
     // to exit.
