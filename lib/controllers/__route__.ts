@@ -59,9 +59,18 @@ export async function Route(
     totalSupply, privateKey, network
   } = <IRequestBody>req.body
 
-  if (net3 
-    ? net3 === network && (network as string) === net1 && (network as string) === net2
-    : network === net1 && (network as string) === net2
+  if (net3) if (
+    network !== net1
+    && (network as string) !== net2
+    && (network as string) !== net3
+  ) return res.status(400).send({
+    success: false,
+    msg: 'You\'ve entered an unsupported network'
+  })
+
+  if (!net3) if (
+    network !== net1
+    && (network as string) !== net2
   ) return res.status(400).send({
     success: false,
     msg: 'You\'ve entered an unsupported network'
