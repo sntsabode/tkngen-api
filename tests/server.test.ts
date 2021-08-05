@@ -1,5 +1,5 @@
 /*
-yarn run mocha -r ts-node/register tests/server.test.ts --timeout 99999
+yarn run mocha -r ts-node/register tests/server.test.ts --timeout 9999999999
 */
 import chaiHttp from 'chai-http'
 import chai, { assert, expect } from 'chai'
@@ -16,6 +16,7 @@ const privateKey = accounts.privateKey
 
 const server = chai.request(app).keepOpen()
 
+const testKovan = false
 const network = 'MAINNET_FORK'
 
 function deployRouteAssertions(res: any) {
@@ -90,12 +91,40 @@ describe(
     assert.strictEqual(decimals, tokenDecimals.toString())
   })
 
+  // Run test if a KOVAN test account is set up.
+  if (process.env.KOVAN_TEST_PVTK && testKovan) it(
+  'Should call the /ERC-20/Standard endpoint deploying to the kovan test network',
+  async () => {
+    const [
+      tokenName, tokenDecimals, tokenSymbol, totalSupply
+    ] = ['TestERC20', 18, 'ERT', 10000]
+
+    const privateKey = process.env.KOVAN_TEST_PVTK
+    const requestBody = {
+      tokenName, tokenDecimals, tokenSymbol,
+      totalSupply, privateKey, network: 'KOVAN'
+    }
+
+    const res = await server.post('/ERC-20/Standard').type('form')
+    .send(requestBody)
+
+    deployRouteAssertions(res)
+    const [name, sym, decimals] = await interfaceWithDeployedTokenContract(
+      res,
+      Web3Fac('MAINNET_FORK')
+    )
+
+    assert.strictEqual(tokenName, name)
+    assert.strictEqual(sym, tokenSymbol)
+    assert.strictEqual(decimals, tokenDecimals.toString())
+  })
+
   it(
   'Should call the /BEP-20/MintableBurnable endpoint',
   async () => {
     const [
       tokenName, tokenDecimals, tokenSymbol, totalSupply
-    ] = ['TestBurnableToken', 6, 'TBT', 100000]
+    ] = ['TestBurnableTokenv3', 6, 'TV3', 100000]
     const privateKey = process.env.BNC_TEST_PVTK!
 
     const res = await server.post('/BEP-20/MintableBurnable').type('form')
@@ -120,7 +149,7 @@ describe(
   async () => {
     const [
       tokenName, tokenDecimals, tokenSymbol, totalSupply
-    ] = ['PopiToken', 6, 'POPI', 100000]
+    ] = ['PoiToken', 6, 'POI', 100000]
     const privateKey = process.env.BNC_TEST_PVTK!
 
     const res = await server.post('/BEP-20/Standard').type('form')
