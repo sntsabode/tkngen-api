@@ -21,7 +21,7 @@ describe(
   'Should compile the StandardERC20 contract',
   done => {
     const inputs = constructSolcInputs('TestERC20',
-      StandardERC20('0.8.6', 'TestERC20', 18, totalSupply)
+      StandardERC20('0.8.6', 'TestERC20', 'TERC', 18, totalSupply)
     )
     const outputs = compile(inputs)
 
@@ -37,7 +37,7 @@ describe(
     const TokenDecimals = 8
 
     const inputs = constructSolcInputs('TestERC20',
-      StandardERC20('0.8.6', 'TestERC20', TokenDecimals, totalSupply)
+      StandardERC20('0.8.6', 'TestERC20', 'TER', TokenDecimals, totalSupply)
     )
     const outputs = compile(inputs)
 
@@ -47,14 +47,14 @@ describe(
     assert.isNotEmpty(bytecode)
     assert.isNotEmpty(ABI)
 
-    const TokenName = 'TestToken'
-    const TokenSym = 'TST'
+    const TokenName = 'TestERC20'
+    const TokenSym = 'TER'
 
     const receipt = await deploy({
       ABI,
       metadata: '',
       evmBytecode: bytecode
-    }, web3, [TokenName, TokenSym], account)
+    }, web3, [], account)
 
     const testERC20ContractInstance = new web3.eth.Contract(ABI, receipt.contractAddress)
     const [name, sym, decimals] = await Promise.all([
