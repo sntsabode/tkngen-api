@@ -1,4 +1,6 @@
-export const MintableBurnableBEP20 = (
+import { IContract } from '../icontract'
+
+export const MintableBurnableBEP20: IContract = (
   solver: string,
   tokenName: string,
   tokenSymbol: string,

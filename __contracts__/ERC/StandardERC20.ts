@@ -1,10 +1,11 @@
-import BN from 'bn.js'
+import { IContract } from '../icontract'
 
-export const StandardERC20 = (
+export const StandardERC20: IContract = (
   solver: string,
   tokenName: string,
-  decimals: number,
-  totalSupply: string | number | BN
+  tokenSymbol: string,
+  tokenDecimals: number,
+  totalSupply: string
 ): string => `
 // SPDX-License-Identifier: MIT
 
@@ -162,22 +163,8 @@ contract ${tokenName} is Context, IERC20, IERC20Metadata {
 
   uint256 private _totalSupply = ${totalSupply};
 
-  string private _name;
-  string private _symbol;
-
-  /**
-    * @dev Sets the values for {name} and {symbol}.
-    *
-    * The default value of {decimals} is 18. To select a different value for
-    * {decimals} you should overload it.
-    *
-    * All two of these values are immutable: they can only be set once during
-    * construction.
-    */
-  constructor(string memory name_, string memory symbol_) {
-    _name = name_;
-    _symbol = symbol_;
-  }
+  string private _name = "${tokenName}";
+  string private _symbol = "${tokenSymbol}";
 
   /**
     * @dev Returns the name of the token.
@@ -208,7 +195,7 @@ contract ${tokenName} is Context, IERC20, IERC20Metadata {
     * {IERC20-balanceOf} and {IERC20-transfer}.
     */
   function decimals() public view virtual override returns (uint8) {
-    return ${decimals};
+    return ${tokenDecimals};
   }
 
   /**

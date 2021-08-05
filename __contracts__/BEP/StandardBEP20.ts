@@ -1,4 +1,6 @@
-export const StandardBEP20 = (
+import { IContract } from '../icontract'
+
+export const StandardBEP20: IContract = (
   solver: string,
   tokenName: string,
   tokenSymbol: string,
