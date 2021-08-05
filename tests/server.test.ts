@@ -91,6 +91,24 @@ describe(
     assert.strictEqual(decimals, tokenDecimals.toString())
   })
 
+  it(
+  'Should call the /ERC-20/Standard endpoint with an erroneous network parameter',
+  async () => {
+    const [
+      tokenName, tokenDecimals, tokenSymbol, totalSupply
+    ] = ['TestERC20', 18, 'ERT', 10000]
+
+    const requestBody = {
+      tokenName, tokenDecimals, tokenSymbol,
+      totalSupply, privateKey, network: 'KOFQuwbfw'
+    }
+
+    const res = await server.post('/ERC-20/Standard').type('form')
+    .send(requestBody)
+
+    expect(res).to.have.status(400)
+  })
+
   // Run test if a KOVAN test account is set up.
   if (process.env.KOVAN_TEST_PVTK && testKovan) it(
   'Should call the /ERC-20/Standard endpoint deploying to the kovan test network',
