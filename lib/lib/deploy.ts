@@ -88,4 +88,5 @@ export interface IRawTransaction {
   from: string
   data: string
   gas: string | number
+  gasPrice: string | number
 }
