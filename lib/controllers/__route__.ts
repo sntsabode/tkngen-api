@@ -3,7 +3,6 @@ import {
   Response as res
 } from 'express'
 import { validationResult } from 'express-validator'
-import { IContract } from '../../__contracts__/icontract'
 import { compile, constructSolcInputs, ISolcInputs } from '../lib/compile'
 import { signAndSendTransaction } from '../lib/deploy'
 import { SupportedNetwork, Web3Fac } from '../web3'
@@ -13,6 +12,14 @@ import * as ERC20 from '../../__contracts__/ERC/__ERC20__'
 import { convertToWei, SupportedDecimals } from '../utils'
 import { Account } from 'web3-core'
 import Web3 from 'web3'
+
+export type IContract = (
+  solver: string,
+  tokenName: string,
+  tokenSymbol: string,
+  tokenDecimals: number,
+  totalSupply: string
+) => string
 
 export type TokenType =
   | 'Standard'
