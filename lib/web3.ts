@@ -3,13 +3,19 @@ import { panic } from './utils'
 // eslint-disable-next-line
 require('dotenv').config()
 
-export type SupportedNetwork =
+export type SupportedETHNetwork = 
   | 'MAINNET'
   | 'MAINNET_FORK'
   | 'KOVAN'
+
+export type SupportedBSCNetwork =
   | 'BINANCESMARTCHAIN'
   | 'BINANCESMARTCHAIN_FORK'
   | 'BINANCESMARTCHAIN_TEST'
+
+export type SupportedNetwork =
+  | SupportedETHNetwork
+  | SupportedBSCNetwork
 
 const NODE_URLs: {
   readonly [url in SupportedNetwork]: string
