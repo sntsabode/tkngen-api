@@ -6,13 +6,15 @@ import chaiHttp from 'chai-http'
 import { app } from '../lib/app'
 import { Web3Fac } from '../lib/web3'
 import Web3 from 'web3'
-require('dotenv').config()
+import accounts from './__bsc.accounts__'
 
 chai.use(chaiHttp)
 
 //const account = accounts.account
 
 const server = chai.request(app).keepOpen()
+
+const privateKey = accounts.privateKey
 
 function deployRouteAssertions(res: any) {
   expect(res).to.have.status(200)
@@ -59,18 +61,17 @@ describe(
     const [
       tokenName, tokenDecimals, tokenSymbol, totalSupply
     ] = ['TestBurnableTokenv3', 6, 'TV3', 100000]
-    const privateKey = process.env.BNC_TEST_PVTK!
 
     const res = await server.post('/BEP-20/MintableBurnable').type('form')
     .send({
       tokenName, tokenDecimals, tokenSymbol,
-      totalSupply, privateKey, network: 'BINANCESMARTCHAIN_TEST'
+      totalSupply, privateKey, network: 'BINANCESMARTCHAIN_FORK'
     })
 
     deployRouteAssertions(res)
     
     const [name, sym, decimals] = await interfaceWithDeployedTokenContract(
-      res, Web3Fac('BINANCESMARTCHAIN_TEST')
+      res, Web3Fac('BINANCESMARTCHAIN_FORK')
     )
 
     assert.strictEqual(name, tokenName)
@@ -84,18 +85,17 @@ describe(
     const [
       tokenName, tokenDecimals, tokenSymbol, totalSupply
     ] = ['PoiToken', 6, 'POI', 100000]
-    const privateKey = process.env.BNC_TEST_PVTK!
 
     const res = await server.post('/BEP-20/Standard').type('form')
     .send({
       tokenName, tokenDecimals, tokenSymbol,
-      totalSupply, privateKey, network: 'BINANCESMARTCHAIN_TEST'
+      totalSupply, privateKey, network: 'BINANCESMARTCHAIN_FORK'
     })
 
     deployRouteAssertions(res)
     
     const [name, sym, decimals] = await interfaceWithDeployedTokenContract(
-      res, Web3Fac('BINANCESMARTCHAIN_TEST')
+      res, Web3Fac('BINANCESMARTCHAIN_FORK')
     )
 
     assert.strictEqual(name, tokenName)
