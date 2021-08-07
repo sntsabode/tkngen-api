@@ -194,7 +194,8 @@ function startGanache(err, result) {
   let dirToFile = path.resolve(dirToPrint, file)
   
   fs.writeFileSync(dirToFile, testAccountFile(
-    testAccountAddress, '0x' + testAccountData.secretKey.toString('hex')
+    '0x' + testAccountData.secretKey.toString('hex'),
+    testAccountAddress
   ))
 
   if (options.account_keys_path != null) {
