@@ -13,7 +13,7 @@ describe('BEP20 endpoints test suite', () => {
   before(async () => {
     // waiting for ganache to boot and write test address and private keys to
     // `__.accounts__` files. not pretty
-    return new Promise((resolve) => setTimeout(() => resolve(), 5000))
+    await new Promise<void>((resolve) => setTimeout(() => resolve(), 5000))
   })
 
   // require files only once ganache has written new test accounts
@@ -21,4 +21,13 @@ describe('BEP20 endpoints test suite', () => {
 
   after(() => ganacheInstance.kill(0))
   process.on('SIGINT', () => ganacheInstance.kill(0))
+  if (process.platform === 'win32') {
+    require('readline').createInterface({
+      input: process.stdin,
+      output: process.stdout
+    })
+    .on('SIGINT', function () {
+      process.emit('SIGINT' as any)
+    })
+  }
 })

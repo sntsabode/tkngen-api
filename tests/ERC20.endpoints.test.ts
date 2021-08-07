@@ -21,4 +21,13 @@ describe('ERC20 endpoints test suite', () => {
 
   after(() => ganacheInstanceETH.kill(0))
   process.on('SIGINT', () => ganacheInstanceETH.kill(0))
+  if (process.platform === 'win32') {
+    require('readline').createInterface({
+      input: process.stdin,
+      output: process.stdout
+    })
+    .on('SIGINT', function () {
+      process.emit('SIGINT' as any)
+    })
+  }
 })
