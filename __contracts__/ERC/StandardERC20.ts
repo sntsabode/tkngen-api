@@ -1,6 +1,4 @@
-import { IContract } from '../icontract'
-
-export const StandardERC20: IContract = (
+export const StandardERC20 = (
   solver: string,
   tokenName: string,
   tokenSymbol: string,
