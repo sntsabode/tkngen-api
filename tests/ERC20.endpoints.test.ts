@@ -8,7 +8,7 @@ require('dotenv').config()
 const ETH_NODE_URL = process.env.ETH_NODE_URL!
 
 describe('ERC20 endpoints test suite', () => {
-  const ganacheInstanceETH = spawnGanache(['--fork', ETH_NODE_URL, '--port', 7545])
+  const ganacheInstance = spawnGanache(['--fork', ETH_NODE_URL, '--port', 7545])
   
   before(async () => {
     // waiting for ganache to boot and write test address and private keys to
@@ -19,15 +19,9 @@ describe('ERC20 endpoints test suite', () => {
   // require files only once ganache has written new test accounts
   it('', () => require('./ERC20.endpoints.tests.test'))
 
-  after(() => ganacheInstanceETH.kill(0))
-  process.on('SIGINT', () => ganacheInstanceETH.kill(0))
-  if (process.platform === 'win32') {
-    require('readline').createInterface({
-      input: process.stdin,
-      output: process.stdout
-    })
-    .on('SIGINT', function () {
-      process.emit('SIGINT' as any)
-    })
-  }
+  after(() => ganacheInstance.kill(0))
+  process.on('SIGINT', () => ganacheInstance.kill(0))
+  if (process.platform === 'win32') require('readline').createInterface({
+    input: process.stdin, output: process.stdout
+  }).on('SIGINT', () => ganacheInstance.kill(0))
 })
