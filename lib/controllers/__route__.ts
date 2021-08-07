@@ -14,18 +14,37 @@ import { convertToWei, SupportedDecimals } from '../utils'
 import { Account } from 'web3-core'
 import Web3 from 'web3'
 
+export type TokenType =
+  | 'Standard'
+  | 'Mintable'
+  | 'Burnable'
+  | 'MintableBurnable'
+
 const ContractMap = {
   BEP20, ERC20
 }
 
 export const RouteEntryPoint = (
-  req: req, res: res,
   tokenType: 'ERC20' | 'BEP20',
-  which:
-    | 'Standard'
+  contractType:
     | 'Mintable'
     | 'Burnable'
     | 'MintableBurnable',
+  nets: SupportedNetwork[]
+): (req: req, res: res) => Promise<res> => (
+  req: req, res: res
+) => RouteEntryPoint_(
+  req, res, tokenType, contractType, nets,
+  (acc, reqb, web3) => web3.eth.abi.encodeParameters(
+    ['string memory', 'string memory', 'uint8', 'uint256'],
+    [reqb.tokenName, reqb.tokenSymbol, reqb.tokenDecimals, reqb.totalSupply]
+  ).slice(2)
+)
+
+export const RouteEntryPoint_ = (
+  req: req, res: res,
+  tokenType: 'ERC20' | 'BEP20',
+  which: TokenType,
   nets: SupportedNetwork[],
   paramFunc?: (account: Account, req: IRequestBody, web3: Web3) => string
 ): Promise<res> => Route(req, res, tokenContractFac(
