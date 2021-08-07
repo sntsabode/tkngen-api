@@ -5,7 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "mocha -r ts-node/register tests/tests.test.ts --timeout 900000",
+    "test": "mocha -r ts-node/register tests/.test.ts --timeout 900000",
     "dev:start": "yarn run ts-node ./lib/server.ts",
     "dev:start_hr": "nodemon",
     "chain": "node chain-fork.js"
