@@ -1,8 +1,7 @@
 import Web3 from 'web3'
 import { panic } from './utils'
-import { config as dotenvConfig } from 'dotenv'
-
-dotenvConfig()
+// eslint-disable-next-line
+require('dotenv').config()
 
 if (!process.env.ETH_NODE_URL)
   throw panic('ETH_NODE_URL undefined')
@@ -14,30 +13,38 @@ export type SupportedNetwork =
   | 'BINANCESMARTCHAIN'
   | 'BINANCESMARTCHAIN_TEST'
 
-/* eslint-disable */
+const Web3Instances = (() => {
+  // asserts env var is defined
+  const Web3wrapper = (nodeUrl?: string) => {
+    if (!nodeUrl) {
+      throw panic(nodeUrl, 'undefined')
+    }
 
-const Web3Instances = {
-  MAINNET: () => new Web3(
-    new Web3.providers.WebsocketProvider(process.env.ETH_NODE_URL!)
-  ),
+    return new Web3(
+      new Web3.providers.WebsocketProvider(nodeUrl)
+    )
+  }
+  
+  return ({
+    MAINNET: () => Web3wrapper(process.env.ETH_NODE_URL),
+    MAINNET_FORK: () => Web3wrapper('http://localhost:7545'),
+    KOVAN: () => Web3wrapper(process.env.ETH_NODE_URL_KOVAN),
+    BINANCESMARTCHAIN: () => Web3wrapper(process.env.BNSC_NODE_URL),
+    BINANCESMARTCHAIN_FORK: () => Web3wrapper('http://localhost:8545'),
+    BINANCESMARTCHAIN_TEST: () => Web3wrapper(process.env.BNSC_TEST_NODE_URL)
+  })
+})()
 
-  MAINNET_FORK: () => new Web3(
-    new Web3.providers.WebsocketProvider('http://localhost:7545')
-  ),
+if (!process.env.LOCAL_INSTANCE) {
+  console.log('LOCAL_INSTANCE var undefined')
 
-  KOVAN: () => new Web3(
-    new Web3.providers.WebsocketProvider(process.env.ETH_NODE_URL_KOVAN!)
-  ),
+  Web3Instances.BINANCESMARTCHAIN_FORK = () => {
+    throw Error('Fork chain is not available')
+  }
 
-  BINANCESMARTCHAIN: () => new Web3(
-    new Web3.providers.WebsocketProvider(process.env.BNSC_NODE_URL!)
-  ),
-
-  BINANCESMARTCHAIN_TEST: () => new Web3(
-    'https://data-seed-prebsc-1-s1.binance.org:8545'
-  )
+  Web3Instances.MAINNET_FORK = () => {
+    throw Error('Fork chain is not available')
+  }
 }
-
-/* eslint-enable */
 
 export const Web3Fac = (instance: SupportedNetwork): Web3 => Web3Instances[instance]()
