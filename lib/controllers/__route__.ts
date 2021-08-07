@@ -6,7 +6,7 @@ import { validationResult } from 'express-validator'
 import { IContract } from '../../__contracts__/icontract'
 import { compile, constructSolcInputs, ISolcInputs } from '../lib/compile'
 import { signAndSendTransaction } from '../lib/deploy'
-import { Web3Fac } from '../web3'
+import { SupportedNetwork, Web3Fac } from '../web3'
 import { IRequestBody } from './__req.body__'
 import * as BEP20 from '../../__contracts__/BEP/__BEP20__'
 import * as ERC20 from '../../__contracts__/ERC/__ERC20__'
@@ -26,13 +26,11 @@ export const RouteEntryPoint = (
     | 'Mintable'
     | 'Burnable'
     | 'MintableBurnable',
-  net1: 'MAINNET' | 'BINANCESMARTCHAIN',
-  net2: 'KOVAN' | 'BINANCESMARTCHAIN_TEST',
-  net3?: 'MAINNET_FORK',
+  nets: SupportedNetwork[],
   paramFunc?: (account: Account, req: IRequestBody, web3: Web3) => string
 ): Promise<res> => Route(req, res, tokenContractFac(
     tokenType, which
-  ), net1, net2, tokenType, net3, paramFunc
+  ), nets, tokenType, paramFunc
 )
 
 export const tokenContractFac = (
@@ -55,11 +53,11 @@ export const tokenContractFac = (
 )
 
 export async function Route(
-  req: req, res: res, contract: IContract,
-  net1: 'BINANCESMARTCHAIN' | 'MAINNET',
-  net2: 'BINANCESMARTCHAIN_TEST' | 'KOVAN',
+  req: req,
+  res: res,
+  contract: IContract,
+  nets: SupportedNetwork[],
   tokenType: 'ERC20' | 'BEP20',
-  net3?: 'MAINNET_FORK',
   paramFunc?: (account: Account, req: IRequestBody, web3: Web3) => string
 ): Promise<res> {
   const errors = validationResult(req)
@@ -67,32 +65,15 @@ export async function Route(
     { success: false, err: errors }
   )
 
-  const {
-    tokenName, tokenDecimals, tokenSymbol,
-    totalSupply, network
-  } = <IRequestBody>req.body
-
-  if (net3) if (
-    network !== net1
-    && (network as string) !== net2
-    && (network as string) !== net3
-  ) return res.status(400).send({
+  if (!nets.includes(req.body.network)) return res.status(400).send({
     success: false,
-    msg: 'You\'ve entered an unsupported network'
-  })
-
-  if (!net3) if (
-    network !== net1
-    && (network as string) !== net2
-  ) return res.status(400).send({
-    success: false,
-    msg: 'You\'ve entered an unsupported network'
+    msg: 'You\'ve enteredan unsupported network'
   })
 
   return RouteHandler(constructSolcInputs(
-    tokenName, contract(
-      '0.8.6', tokenName, tokenSymbol,
-      tokenDecimals, totalSupply.toString()
+    req.body.tokenName, contract(
+      '0.8.6', req.body.tokenName, req.body.tokenSymbol,
+      req.body.tokenDecimals, req.body.totalSupply.toString()
     )
   ), res, tokenType, req.body, paramFunc)
 }
