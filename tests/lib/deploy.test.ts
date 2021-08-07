@@ -44,7 +44,7 @@ describe(
     const receipt = await DeployMod.signAndSendTransaction({
       from: account,
       data: solcExtract.evmBytecode,
-      gas
+      gas, gasPrice: 18e9
     }, privateKey, web3)
     
     expect(receipt).to.have.property('transactionHash')
