@@ -2,31 +2,29 @@ import {
   Request as req,
   Response as res
 } from 'express'
-import { RouteEntryPoint } from './__route__'
+import { RouteEntryPoint, RouteEntryPoint_ } from './__route__'
 
 export const StandardERC20Route = (
   req: req, res: res
-): Promise<res> => RouteEntryPoint(
+): Promise<res> => RouteEntryPoint_(
   req, res, 'ERC20', 'Standard',
   ['MAINNET', 'KOVAN', 'MAINNET_FORK']
 )
 
 export const MintableERC20Route = (
   req: req, res: res
-): Promise<res> => RouteEntryPoint(
-  req, res, 'ERC20', 'Mintable', ['MAINNET', 'KOVAN', 'MAINNET_FORK'],
-  (account, req, web3) => web3.eth.abi.encodeParameters(
-    ['string memory', 'string memory', 'uint8', 'uint256'],
-    [req.tokenName, req.tokenSymbol, req.tokenDecimals, req.totalSupply]
-  ).slice(2)
-)
+): Promise<res> => RouteEntryPoint('ERC20', 'Mintable', [
+  'MAINNET', 'MAINNET_FORK', 'KOVAN'
+])(req, res)
 
 export const BurnableERC20Route = (
   req: req, res: res
-): Promise<res> => RouteEntryPoint(
-  req, res, 'BEP20', 'Burnable', ['MAINNET', 'KOVAN', 'MAINNET_FORK'],
-  (account, req, web3) => web3.eth.abi.encodeParameters(
-    ['string memory', 'string memory', 'uint8', 'uint256'],
-    [req.tokenName, req.tokenSymbol, req.tokenDecimals, req.totalSupply]
-  ).slice(2)
-)
+): Promise<res> => RouteEntryPoint('ERC20', 'Burnable', [
+  'MAINNET', 'MAINNET_FORK', 'KOVAN'
+])(req, res)
+
+export const MintableBurnableERC20Route = (
+  req: req, res: res
+): Promise<res> => RouteEntryPoint('ERC20', 'MintableBurnable', [
+  'MAINNET', 'MAINNET_FORK', 'KOVAN'
+])(req, res)
