@@ -16,6 +16,18 @@ router.post(
 )
 
 router.post(
+  '/ERC-20/Mintable',
+  RequestValidation,
+  ERC20Controllers.MintableERC20Route
+)
+
+router.post(
+  '/ERC-20/Burnable',
+  RequestValidation,
+  ERC20Controllers.BurnableERC20Route
+)
+
+router.post(
   '/BEP-20/Standard',
   RequestValidation,
   BEP20Controllers.StandardBEP20Route
