@@ -1,10 +1,21 @@
 import { 
-  check as validate
+  check as validate, Meta
 } from 'express-validator'
+
+function NoSpecialCharsValidation(
+  input: string, meta: Meta
+) {
+  if (/[^a-zA-Z0-9_]/.test(input)) {
+    throw new Error('Found special characters: ' + meta.path)
+  }
+
+  return true
+}
 
 export const RequestValidation = [
   validate('tokenName', 'Invalid token name')
     .isString()
+    .custom(NoSpecialCharsValidation)
     .escape()
     .trim(),
 
@@ -15,6 +26,7 @@ export const RequestValidation = [
 
   validate('tokenSymbol', 'Invalid token symbol')
     .isString()
+    .custom(NoSpecialCharsValidation)
     .escape()
     .trim(),
 
