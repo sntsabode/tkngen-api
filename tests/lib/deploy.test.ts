@@ -2,7 +2,7 @@ import * as DeployMod from '../../lib/lib/deploy'
 import * as CompileMod from '../../lib/lib/compile'
 import { assert, expect } from 'chai'
 import { Web3Fac } from '../../lib/web3'
-const accounts = require('../__accounts__')
+const accounts = require('../__eth.accounts__')
 
 const web3 = Web3Fac('MAINNET_FORK')
 const account = accounts.account

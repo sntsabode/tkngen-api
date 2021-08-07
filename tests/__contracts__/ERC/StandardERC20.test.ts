@@ -7,7 +7,7 @@ import { constructSolcInputs } from '../../../lib/lib/compile'
 import { assert } from 'chai'
 import { deploy } from '../../../lib/lib/deploy'
 import { Web3Fac } from '../../../lib/web3'
-const accounts = require('../../__accounts__')
+import accounts from '../../__eth.accounts__'
 
 const web3 = Web3Fac('MAINNET_FORK')
 const account = accounts.account

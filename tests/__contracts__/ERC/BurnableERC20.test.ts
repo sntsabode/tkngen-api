@@ -5,7 +5,7 @@ import { compile } from '../../../lib/lib/compile'
 import { BurnableERC20 } from '../../../__contracts__/ERC/BurnableERC20'
 import { constructSolcInputs } from '../../../lib/lib/compile'
 import { Web3Fac } from '../../../lib/web3'
-import accounts from '../../__accounts__'
+import accounts from '../../__eth.accounts__'
 import { assert, expect } from 'chai'
 
 const web3 = Web3Fac('MAINNET_FORK')

@@ -3,7 +3,7 @@ yarn run mocha -r ts-node/register tests/ERC20.endpoints.test.ts --timeout 99999
 */
 import chai, { assert, expect } from 'chai'
 import chaiHttp from 'chai-http'
-import accounts from './__accounts__'
+import accounts from './__eth.accounts__'
 import { app } from '../lib/app'
 import { Web3Fac } from '../lib/web3'
 import Web3 from 'web3'
@@ -14,7 +14,6 @@ chai.use(chaiHttp)
 //const account = accounts.account
 
 const server = chai.request(app).keepOpen()
-
 
 const testKovan = false
 const network = 'MAINNET_FORK'
@@ -70,6 +69,8 @@ describe(
       tokenName, tokenDecimals, tokenSymbol,
       totalSupply, privateKey, network
     }
+
+    console.log(privateKey)
 
     const res = await server.post('/ERC-20/Standard').type('form')
     .send(requestBody)
