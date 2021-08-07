@@ -67,7 +67,7 @@ export interface ISolcOutputSources {
  * Interface is not complete
  * https://docs.soliditylang.org/en/v0.8.6/using-the-compiler.html 
  * 
- * See above link for full ABI
+ * See above link for full API
  */
 export interface ISolcOutputContracts {
   [solfile: string]: {
