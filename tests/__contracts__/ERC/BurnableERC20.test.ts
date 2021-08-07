@@ -11,12 +11,8 @@ import { assert, expect } from 'chai'
 const web3 = Web3Fac('MAINNET_FORK')
 //const account = accounts.account
 
-describe(
-'BurnableERC20 contract test suite',
-() => {
-  it(
-  'Should compile and deploy the BurnableERC20 contract',
-  async () => {
+describe('BurnableERC20 contract test suite', () => {
+  it('Should compile and deploy the BurnableERC20 contract', async () => {
     const tokenName = 'TestBurnableToken'
     const tokenSym = 'ERC'
     const tokenDecimals = 6

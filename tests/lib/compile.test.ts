@@ -9,12 +9,8 @@ contract Test {
 }
 `.trim()
 
-describe(
-'compile module test suite',
-() => {
-  it(
-  'Should call the constructSolcInputs function',
-  async () => {
+describe('compile module test suite', () => {
+  it('Should call the constructSolcInputs function', async () => {
     const inputs = CompileMod.constructSolcInputs('Test.sol', contract)
 
     expect(inputs).to.have.property('language')
@@ -24,9 +20,7 @@ describe(
     assert.isString(inputs.sources['Test.sol'].content)
   })
 
-  it(
-  'Should call the compile function',
-  async () => {
+  it('Should call the compile function', async () => {
     const inputs = CompileMod.constructSolcInputs('Test.sol', contract)
     const outputs = await CompileMod.compile(inputs)
 

@@ -10,12 +10,8 @@ import { assert, expect } from 'chai'
 
 const web3 = Web3Fac('MAINNET_FORK')
 
-describe(
-'MintableERC20 contract test suite',
-() => {
-  it(
-  'Should compile and deploy the MintableERC20 contract',
-  async () => {
+describe('MintableERC20 contract test suite', () => {
+  it('Should compile and deploy the MintableERC20 contract', async () => {
     const tokenName = 'TestMintableToken'
     const tokenSym = 'ERC'
     const tokenDecimals = 6

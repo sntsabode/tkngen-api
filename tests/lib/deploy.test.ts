@@ -2,7 +2,7 @@ import * as DeployMod from '../../lib/lib/deploy'
 import * as CompileMod from '../../lib/lib/compile'
 import { assert, expect } from 'chai'
 import { Web3Fac } from '../../lib/web3'
-const accounts = require('../__eth.accounts__')
+import accounts from '../__eth.accounts__'
 
 const web3 = Web3Fac('MAINNET_FORK')
 const account = accounts.account
@@ -30,12 +30,8 @@ contract Test {
 }
 `.trim()
 
-describe(
-'deploy module test suite',
-() => {
-  it(
-  'Should call the signAndSendTransaction function',
-  async () => {
+describe('deploy module test suite', () => {
+  it('Should call the signAndSendTransaction function', async () => {
     const gas = 2000000
     const inputs = CompileMod.constructSolcInputs('Test.sol', contract)
     const output = CompileMod.compile(inputs).contracts
@@ -62,9 +58,7 @@ describe(
     expect(receipt).to.have.property('logsBloom')
   })
 
-  it(
-  'Should call the deploy function',
-  async () => {
+  it('Should call the deploy function', async () => {
     const inputs = CompileMod.constructSolcInputs('Test.sol', contractWithConstructor)
     const output = CompileMod.compile(inputs)
     const solcExtract = CompileMod.extractFromSolcOutput(output.contracts)
@@ -89,9 +83,7 @@ describe(
     assert.strictEqual(shouldBe_one, '1')
   })
 
-  it(
-  'Should call the quickDeploy function',
-  async () => {
+  it('Should call the quickDeploy function', async () => {
     const res = await DeployMod.quickDeploy(
       contractWithConstructor,
       'Test', [10],

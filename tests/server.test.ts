@@ -8,12 +8,8 @@ require('dotenv').config()
 
 chai.use(chaiHttp)
 
-describe(
-'tkngen-api server test suite',
-() => {
-  it(
-  'Should call the /ping endpoint',
-  async () => {
+describe('tkngen-api server test suite', () => {
+  it('Should call the /ping endpoint', async () => {
     const res = await chai.request(app).get('/ping')
     expect(res).to.have.status(200)
   })

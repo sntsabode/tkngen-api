@@ -4,12 +4,8 @@ yarn run mocha -r ts-node/register tests/utils.test.ts --timeout 99999
 import { assert } from 'chai'
 import * as Utils from '../lib/utils'
 
-describe(
-'Utils module test suite',
-() => {
-  it(
-  'Should call the convertToWei function with 6 decimals',
-  done => {
+describe('Utils module test suite', () => {
+  it('Should call the convertToWei function with 6 decimals', done => {
     const valBefore = 1
     const valAfter = Utils.convertToWei(valBefore.toString(), '6').toString()
 
@@ -19,9 +15,7 @@ describe(
     done()
   })
 
-  it(
-  'Should call the convertToWei function with 8 decimals',
-  done => {
+  it('Should call the convertToWei function with 8 decimals', done => {
     const valBefore = 1
     const valAfter = Utils.convertToWei(valBefore.toString(), '8').toString()
 
@@ -31,9 +25,7 @@ describe(
     done()
   })
 
-  it(
-  'Should call the convertToWei function with 12 decimals',
-  done => {
+  it('Should call the convertToWei function with 12 decimals', done => {
     const valBefore = 1
     const valAfter = Utils.convertToWei(valBefore.toString(), '12').toString()
 
@@ -43,9 +35,7 @@ describe(
     done()
   })
 
-  it(
-  'Should call the convertToWei function with 18 decimals',
-  done => {
+  it('Should call the convertToWei function with 18 decimals', done => {
     const valBefore = 1
     const valAfter = Utils.convertToWei(valBefore.toString(), '18').toString()
 

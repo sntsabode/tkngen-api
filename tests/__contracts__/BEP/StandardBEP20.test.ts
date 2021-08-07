@@ -14,12 +14,8 @@ config()
 //const address = process.env.BNC_TEST_ACC!
 //const privateKey = process.env.BNC_TEST_PVTK!
 
-describe(
-'StandardBEP20 contract test suite',
-() => {
-  it(
-  'Should compile the StandardBEP20 contract',
-  done => {
+describe('StandardBEP20 contract test suite', () => {
+  it('Should compile the StandardBEP20 contract', done => {
     const inputs = constructSolcInputs('TestBEP20', StandardBEP20(
       '0.8.6', 'TestBEP20', 'BEP', 8, (100 * 10**8).toString()
     ))
@@ -32,11 +28,7 @@ describe(
     done()
   })
 
-  // See `server.test.ts`
-
-  /*it(
-  'Should compile and deploy the StandardBEP20 contract',
-  async () => {
+  /*it('Should compile and deploy the StandardBEP20 contract', async () => {
     const TokenName = 'TestToken'
     const TokenSym = 'BEP'
     const TokenDecimals = 8

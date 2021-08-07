@@ -14,12 +14,8 @@ const account = accounts.account
 
 const totalSupply = web3.utils.toWei('100000')
 
-describe(
-'StandardERC20 contract test suite',
-() => {
-  it(
-  'Should compile the StandardERC20 contract',
-  done => {
+describe('StandardERC20 contract test suite', () => {
+  it('Should compile the StandardERC20 contract', done => {
     const inputs = constructSolcInputs('TestERC20',
       StandardERC20('0.8.6', 'TestERC20', 'TERC', 18, totalSupply)
     )
@@ -31,9 +27,7 @@ describe(
     done()
   })
 
-  it(
-  'Should compile and deploy the StandardERC20 contract',
-  async () => {
+  it('Should compile and deploy the StandardERC20 contract', async () => {
     const TokenDecimals = 8
 
     const inputs = constructSolcInputs('TestERC20',
