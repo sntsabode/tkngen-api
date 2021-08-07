@@ -24,4 +24,5 @@ describe(
   })
 
   after(() => ganacheInstance.kill(0))
+  process.on('SIGINT', () => ganacheInstance.kill(0))
 })
