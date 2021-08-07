@@ -11,28 +11,42 @@ export type SupportedNetwork =
   | 'MAINNET_FORK'
   | 'KOVAN'
   | 'BINANCESMARTCHAIN'
+  | 'BINANCESMARTCHAIN_FORK'
   | 'BINANCESMARTCHAIN_TEST'
 
-const Web3Instances = (() => {
-  // asserts env var is defined
-  const Web3wrapper = (nodeUrl?: string) => {
-    if (!nodeUrl) {
-      throw panic(nodeUrl, 'undefined')
-    }
+type Web3_Instances<URL extends string, T> = {
+  [url in URL]: T
+}
 
-    return new Web3(
-      new Web3.providers.WebsocketProvider(nodeUrl)
-    )
+type NODE_URLs = Web3_Instances<SupportedNetwork, string>
+const NODE_URLs: NODE_URLs = (() => {
+  const assert_env_var = (env_var?: string): string => {
+    if (!env_var) throw panic('ENV var undefined')
+    return env_var
   }
-  
+
   return ({
-    MAINNET: () => Web3wrapper(process.env.ETH_NODE_URL),
-    MAINNET_FORK: () => Web3wrapper('http://localhost:7545'),
-    KOVAN: () => Web3wrapper(process.env.ETH_NODE_URL_KOVAN),
-    BINANCESMARTCHAIN: () => Web3wrapper(process.env.BNSC_NODE_URL),
-    BINANCESMARTCHAIN_FORK: () => Web3wrapper('http://localhost:8545'),
-    BINANCESMARTCHAIN_TEST: () => Web3wrapper(process.env.BNSC_TEST_NODE_URL)
+    MAINNET: assert_env_var(process.env.ETH_NODE_URL),
+    MAINNET_FORK: 'http://localhost:7545',
+    KOVAN: assert_env_var(process.env.ETH_NODE_URL_KOVAN),
+    BINANCESMARTCHAIN: assert_env_var(process.env.BNSC_NODE_URL),
+    BINANCESMARTCHAIN_FORK: 'http://localhost:8545',
+    BINANCESMARTCHAIN_TEST: assert_env_var(process.env.BNSC_TEST_NODE_URL)
   })
+})()
+
+type IWeb3Instances = Web3_Instances<SupportedNetwork, () => Web3>
+const Web3Instances: IWeb3Instances = (() => {
+  const Web3wrapper = (nodeUrl: string) => new Web3(
+    new Web3.providers.WebsocketProvider(nodeUrl)
+  )
+
+  const returnObj = ({} as IWeb3Instances)
+  
+  for (const [network, node_url] of Object.entries(NODE_URLs))
+    returnObj[(network as SupportedNetwork)] = () => Web3wrapper(node_url)
+  
+  return returnObj
 })()
 
 if (!process.env.LOCAL_INSTANCE) {
