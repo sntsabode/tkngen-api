@@ -188,7 +188,7 @@ function startGanache(err, result) {
   })
 
   let dirToPrint = path.resolve(process.cwd(), 'tests')
-  let file = state.blockchain.options.fork === 'https://data-seed-prebsc-1-s1.binance.org:8545'
+  let file = state.blockchain.options.fork === 'https://bsc-dataseed1.binance.org'
     ? '__bsc.accounts__.js'
     : '__eth.accounts__.js'
   let dirToFile = path.resolve(dirToPrint, file)
