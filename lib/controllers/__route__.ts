@@ -6,11 +6,13 @@ import { validationResult } from 'express-validator'
 import { IContract } from '../../__contracts__/icontract'
 import { compile, constructSolcInputs, ISolcInputs } from '../lib/compile'
 import { signAndSendTransaction } from '../lib/deploy'
-import { SupportedNetwork, Web3Fac } from '../web3'
+import { Web3Fac } from '../web3'
 import { IRequestBody } from './__req.body__'
 import * as BEP20 from '../../__contracts__/BEP/__BEP20__'
 import * as ERC20 from '../../__contracts__/ERC/__ERC20__'
 import { convertToWei, SupportedDecimals } from '../utils'
+import { Account } from 'web3-core'
+import Web3 from 'web3'
 
 const ContractMap = {
   BEP20, ERC20
@@ -19,18 +21,27 @@ const ContractMap = {
 export const RouteEntryPoint = (
   req: req, res: res,
   tokenType: 'ERC20' | 'BEP20',
-  which: 'Standard' | 'MintableBurnable',
+  which:
+    | 'Standard'
+    | 'Mintable'
+    | 'Burnable'
+    | 'MintableBurnable',
   net1: 'MAINNET' | 'BINANCESMARTCHAIN',
   net2: 'KOVAN' | 'BINANCESMARTCHAIN_TEST',
-  net3?: 'MAINNET_FORK'
+  net3?: 'MAINNET_FORK',
+  paramFunc?: (account: Account, req: IRequestBody, web3: Web3) => string
 ): Promise<res> => Route(req, res, tokenContractFac(
     tokenType, which
-  ), net1, net2, net3
+  ), net1, net2, tokenType, net3, paramFunc
 )
 
 export const tokenContractFac = (
   tokenType: 'BEP20' | 'ERC20',
-  which: 'MintableBurnable' | 'Standard'
+  which:
+    | 'MintableBurnable'
+    | 'Mintable'
+    | 'Burnable'
+    | 'Standard'
 ): IContract => (
   solver: string,
   tokenName: string,
@@ -47,7 +58,9 @@ export async function Route(
   req: req, res: res, contract: IContract,
   net1: 'BINANCESMARTCHAIN' | 'MAINNET',
   net2: 'BINANCESMARTCHAIN_TEST' | 'KOVAN',
-  net3?: 'MAINNET_FORK'
+  tokenType: 'ERC20' | 'BEP20',
+  net3?: 'MAINNET_FORK',
+  paramFunc?: (account: Account, req: IRequestBody, web3: Web3) => string
 ): Promise<res> {
   const errors = validationResult(req)
   if (!errors.isEmpty()) return res.status(400).send(
@@ -56,7 +69,7 @@ export async function Route(
 
   const {
     tokenName, tokenDecimals, tokenSymbol,
-    totalSupply, privateKey, network
+    totalSupply, network
   } = <IRequestBody>req.body
 
   if (net3) if (
@@ -76,30 +89,32 @@ export async function Route(
     msg: 'You\'ve entered an unsupported network'
   })
 
-  return RouteHandler(
-    network, tokenName, privateKey, constructSolcInputs(
+  return RouteHandler(constructSolcInputs(
     tokenName, contract(
       '0.8.6', tokenName, tokenSymbol,
       tokenDecimals, totalSupply.toString()
     )
-  ), res, 'BEP20')
+  ), res, tokenType, req.body, paramFunc)
 }
 
 export async function RouteHandler(
-  network: SupportedNetwork,
-  tokenName: string,
-  privateKey: string,
   inputs: ISolcInputs,
   res: res,
-  tokenType: 'ERC20' | 'BEP20'
+  tokenType: 'ERC20' | 'BEP20',
+  req: IRequestBody,
+  paramFunc?: (account: Account, req: IRequestBody, web3: Web3) => string
 ): Promise<res> {
   try {
-    const web3 = Web3Fac(network)
+    const web3 = Web3Fac(req.network)
     const outputs = compile(inputs)
 
-    const ABI = outputs.contracts[tokenName][tokenName].abi
-    const evmBytecode = outputs.contracts[tokenName][tokenName].evm.bytecode.object
-    const account = web3.eth.accounts.privateKeyToAccount(privateKey)
+    const ABI = outputs.contracts[req.tokenName][req.tokenName].abi
+    const evmBytecode = outputs.contracts[req.tokenName][req.tokenName].evm.bytecode.object
+    const account = web3.eth.accounts.privateKeyToAccount(req.privateKey)
+
+    const data = paramFunc
+      ? evmBytecode + paramFunc(account, req, web3)
+      : evmBytecode
 
     return res.status(200).send({
       success: true,
@@ -109,8 +124,8 @@ export async function RouteHandler(
           from: account.address,
           gas: 5000000,
           gasPrice: 18e9,
-          data: evmBytecode
-        }, privateKey, web3)),
+          data
+        }, req.privateKey, web3)),
 
         solc: {
           ABI, evmBytecode
