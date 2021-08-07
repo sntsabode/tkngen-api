@@ -67,34 +67,34 @@ export async function Route(
 
   if (!nets.includes(req.body.network)) return res.status(400).send({
     success: false,
-    msg: 'You\'ve enteredan unsupported network'
+    msg: 'You\'ve entered an unsupported network'
   })
 
-  return RouteHandler(constructSolcInputs(
+  return RouteHandler(req.body, res, constructSolcInputs(
     req.body.tokenName, contract(
       '0.8.6', req.body.tokenName, req.body.tokenSymbol,
       req.body.tokenDecimals, req.body.totalSupply.toString()
     )
-  ), res, tokenType, req.body, paramFunc)
+  ), tokenType, paramFunc)
 }
 
 export async function RouteHandler(
-  inputs: ISolcInputs,
+  reqbody: IRequestBody,
   res: res,
+  inputs: ISolcInputs,
   tokenType: 'ERC20' | 'BEP20',
-  req: IRequestBody,
   paramFunc?: (account: Account, req: IRequestBody, web3: Web3) => string
 ): Promise<res> {
   try {
-    const web3 = Web3Fac(req.network)
+    const web3 = Web3Fac(reqbody.network)
     const outputs = compile(inputs)
 
-    const ABI = outputs.contracts[req.tokenName][req.tokenName].abi
-    const evmBytecode = outputs.contracts[req.tokenName][req.tokenName].evm.bytecode.object
-    const account = web3.eth.accounts.privateKeyToAccount(req.privateKey)
+    const ABI = outputs.contracts[reqbody.tokenName][reqbody.tokenName].abi
+    const evmBytecode = outputs.contracts[reqbody.tokenName][reqbody.tokenName].evm.bytecode.object
+    const account = web3.eth.accounts.privateKeyToAccount(reqbody.privateKey)
 
     const data = paramFunc
-      ? evmBytecode + paramFunc(account, req, web3)
+      ? evmBytecode + paramFunc(account, reqbody, web3)
       : evmBytecode
 
     return res.status(200).send({
@@ -106,7 +106,7 @@ export async function RouteHandler(
           gas: 5000000,
           gasPrice: 18e9,
           data
-        }, req.privateKey, web3)),
+        }, reqbody.privateKey, web3)),
 
         solc: {
           ABI, evmBytecode
