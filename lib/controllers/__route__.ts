@@ -49,7 +49,8 @@ export const RouteEntryPoint = (
 )
 
 export const RouteEntryPoint_ = (
-  req: req, res: res,
+  req: req,
+  res: res,
   tokenType: 'ERC20' | 'BEP20',
   which: TokenType,
   nets: SupportedNetwork[],
