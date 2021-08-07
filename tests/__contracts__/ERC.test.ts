@@ -4,4 +4,5 @@ describe(
   require('./ERC/StandardERC20.test')
   require('./ERC/BurnableERC20.test')
   require('./ERC/MintableERC20.test')
+  require('./ERC/MintableBurnableERC20.test')
 })
