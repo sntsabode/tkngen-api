@@ -70,8 +70,6 @@ describe(
       totalSupply, privateKey, network
     }
 
-    console.log(privateKey)
-
     const res = await server.post('/ERC-20/Standard').type('form')
     .send(requestBody)
 

@@ -13,7 +13,7 @@ describe('ERC20 endpoints test suite', () => {
   before(async () => {
     // waiting for ganache to boot and write test address and private keys to
     // `__.accounts__` files. not pretty
-    return new Promise((resolve) => setTimeout(() => resolve(), 5000))
+    await new Promise<void>((resolve) => setTimeout(() => resolve(), 10000))
   })
 
   // require files only once ganache has written new test accounts
