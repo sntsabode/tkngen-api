@@ -5,16 +5,28 @@ import { compile } from '../../../lib/lib/compile'
 import { StandardERC20 } from '../../../__contracts__/ERC/StandardERC20'
 import { constructSolcInputs } from '../../../lib/lib/compile'
 import { assert } from 'chai'
-import { deploy } from '../../../lib/lib/deploy'
 import { Web3Fac } from '../../../lib/web3'
-import accounts from '../../__eth.accounts__'
 
 const web3 = Web3Fac('MAINNET_FORK')
-const account = accounts.account
+
+const testAccount = web3.eth.accounts.create()
+const account = testAccount.address
 
 const totalSupply = web3.utils.toWei('100000')
 
 describe('StandardERC20 contract test suite', () => {
+  before(async () => {
+    const web3accounts = await web3.eth.getAccounts()
+
+    await web3.eth.sendTransaction({
+      from: web3accounts[0],
+      to: testAccount.address,
+      value: web3.utils.toWei('1'),
+      gas: 5000000,
+      gasPrice: 18e9
+    })
+  })
+
   it('Should compile the StandardERC20 contract', done => {
     const inputs = constructSolcInputs('TestERC20',
       StandardERC20('0.8.6', 'TestERC20', 'TERC', 18, totalSupply)
@@ -44,11 +56,14 @@ describe('StandardERC20 contract test suite', () => {
     const TokenName = 'TestERC20'
     const TokenSym = 'TER'
 
-    const receipt = await deploy({
-      ABI,
-      metadata: '',
-      evmBytecode: bytecode
-    }, web3, [], account)
+    const signedTX = await testAccount.signTransaction({
+      from: account,
+      gas: 5000000,
+      gasPrice: 18e9,
+      data: bytecode
+    })
+
+    const receipt = await web3.eth.sendSignedTransaction(signedTX.rawTransaction!)
 
     const testERC20ContractInstance = new web3.eth.Contract(ABI, receipt.contractAddress)
     const [name, sym, decimals] = await Promise.all([

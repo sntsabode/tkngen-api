@@ -5,13 +5,26 @@ import { compile } from '../../../lib/lib/compile'
 import { BurnableERC20 } from '../../../__contracts__/ERC/BurnableERC20'
 import { constructSolcInputs } from '../../../lib/lib/compile'
 import { Web3Fac } from '../../../lib/web3'
-import accounts from '../../__eth.accounts__'
 import { assert, expect } from 'chai'
 
 const web3 = Web3Fac('MAINNET_FORK')
 //const account = accounts.account
 
+const testAccount = web3.eth.accounts.create()
+
 describe('BurnableERC20 contract test suite', () => {
+  before(async () => {
+    const web3accounts = await web3.eth.getAccounts()
+
+    await web3.eth.sendTransaction({
+      from: web3accounts[0],
+      to: testAccount.address,
+      value: web3.utils.toWei('1'),
+      gas: 5000000,
+      gasPrice: 18e9
+    })
+  })
+
   it('Should compile and deploy the BurnableERC20 contract', async () => {
     const tokenName = 'TestBurnableToken'
     const tokenSym = 'ERC'
@@ -25,7 +38,7 @@ describe('BurnableERC20 contract test suite', () => {
     const ABI = outputs.contracts[tokenName][tokenName].abi
     const evmBytecode = outputs.contracts[tokenName][tokenName].evm.bytecode.object
 
-    const account = web3.eth.accounts.privateKeyToAccount(accounts.privateKey)
+    const account = testAccount
 
     const tx = {
       from: account.address,
