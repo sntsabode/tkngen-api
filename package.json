@@ -1,7 +1,7 @@
 {
   "name": "tkngen-api",
   "version": "0.1.0",
-  "description": "tkngen's api backend. This is the backend responsible for making and deploying ERC20 tokens and BEP20 tokens.",
+  "description": "tkngen's api. This is the backend responsible for making and deploying ERC20 tokens and BEP20 tokens.",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
