@@ -3,5 +3,5 @@ dist
 .env
 yarn-error.log
 
-__bsc.accounts__.js
-__eth.accounts__.js
+.nyc_output
+coverage
