@@ -5,10 +5,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "mocha -r ts-node/register tests/.test.ts --timeout 900000",
+    "test": "chmod +x ./.test.sh && ./.test.sh",
+    "tests": "mocha -r ts-node/register tests/.test.ts --timeout 900000",
     "dev:start": "yarn run ts-node ./lib/server.ts",
     "dev:start_hr": "nodemon",
-    "chain": "chmod +x ./.ganache.sh && ./.ganache.sh",
+    "chain": "chmod +x ./.ganache-fork.sh && ./.ganache-fork.sh",
     "chain:eth": "node chain-fork.js -eqw",
     "chain:bsc": "node chain-fork.js -bqw"
   },
