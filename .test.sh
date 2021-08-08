@@ -19,7 +19,7 @@ then
     echo "Running testsuite."
     echo
 
-    (yarn run chain) & (sleep 10s && yarn run testsuite)
+    (chmod +x ./.ganache/.ganache_nofork.sh && ./.ganache/.ganache_nofork.sh) & (sleep 10s && yarn run testsuite)
 
     sleep 10000
   done
@@ -42,10 +42,10 @@ then
 
   for (( ; ; ))
   do
-    echo "Running Tests"
+    echo "Running testsuite"
     echo
 
-    (yarn run chain:fork) & (sleep 10s && yarn run testsuite)
+    (chmod +x ./.ganache/.ganache_nofork.sh && ./.ganache/.ganache_nofork.sh:fork) & (sleep 10s && yarn run testsuite)
 
     sleep 10000
   done
@@ -58,10 +58,10 @@ then
 
   for (( ; ; ))
   do
-    echo "Running Tests"
+    echo "Running testsuite"
     echo
 
-    (yarn run chain) & (sleep 10s && yarn run testsuite)
+    (chmod +x ./.ganache/.ganache_nofork.sh && ./.ganache/.ganache_nofork.sh) & (sleep 10s && yarn run testsuite)
 
     sleep 10000
   done
