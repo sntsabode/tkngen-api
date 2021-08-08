@@ -1,12 +1,14 @@
+/*
+yarn run mocha -r ts-node/register tests/lib/deploy.test.ts --timeout 99999
+*/
 import * as DeployMod from '../../lib/lib/deploy'
 import * as CompileMod from '../../lib/lib/compile'
 import { assert, expect } from 'chai'
 import { Web3Fac } from '../../lib/web3'
-import accounts from '../__eth.accounts__'
 
 const web3 = Web3Fac('MAINNET_FORK')
-const account = accounts.account
-const privateKey = accounts.privateKey
+
+const testAccount = web3.eth.accounts.create()
 
 const contract = `
 pragma solidity ^0.8.6;
@@ -31,6 +33,18 @@ contract Test {
 `.trim()
 
 describe('deploy module test suite', () => {
+  before(async () => {
+    const web3accounts = await web3.eth.getAccounts()
+
+    await web3.eth.sendTransaction({
+      from: web3accounts[0],
+      to: testAccount.address,
+      value: web3.utils.toWei('1'),
+      gas: 5000000,
+      gasPrice: 18e9
+    })
+  })
+
   it('Should call the signAndSendTransaction function', async () => {
     const gas = 2000000
     const inputs = CompileMod.constructSolcInputs('Test.sol', contract)
@@ -38,10 +52,10 @@ describe('deploy module test suite', () => {
     const solcExtract = CompileMod.extractFromSolcOutput(output)
 
     const receipt = await DeployMod.signAndSendTransaction({
-      from: account,
+      from: testAccount.address,
       data: solcExtract.evmBytecode,
       gas, gasPrice: 18e9
-    }, privateKey, web3)
+    }, testAccount.privateKey, web3)
     
     expect(receipt).to.have.property('transactionHash')
     expect(receipt).to.have.property('transactionIndex')
@@ -58,12 +72,19 @@ describe('deploy module test suite', () => {
     expect(receipt).to.have.property('logsBloom')
   })
 
-  it('Should call the deploy function', async () => {
+  it('Should call the signAndSendTransaction function with contract constructor arguments', async () => {
+    const gas = 2000000
     const inputs = CompileMod.constructSolcInputs('Test.sol', contractWithConstructor)
-    const output = CompileMod.compile(inputs)
-    const solcExtract = CompileMod.extractFromSolcOutput(output.contracts)
+    const output = CompileMod.compile(inputs).contracts
+    const solcExtract = CompileMod.extractFromSolcOutput(output)
 
-    const receipt = await DeployMod.deploy(solcExtract, web3, ['2'], account)
+    const receipt = await DeployMod.signAndSendTransaction({
+      from: testAccount.address,
+      data: solcExtract.evmBytecode + web3.eth.abi.encodeParameters(
+        ['uint256'], [200]
+      ).slice(2),
+      gas, gasPrice: 18e9
+    }, testAccount.privateKey, web3)
     
     expect(receipt).to.have.property('transactionHash')
     expect(receipt).to.have.property('transactionIndex')
@@ -75,27 +96,8 @@ describe('deploy module test suite', () => {
     expect(receipt).to.have.property('cumulativeGasUsed')
     expect(receipt).to.have.property('contractAddress')
     assert.isNotEmpty(receipt.contractAddress)
+    expect(receipt).to.have.property('logs')
     expect(receipt).to.have.property('status')
     expect(receipt).to.have.property('logsBloom')
-
-    const testContractInstance = new web3.eth.Contract(solcExtract.ABI, receipt.contractAddress)
-    const shouldBe_one = await testContractInstance.methods.x().call()
-    assert.strictEqual(shouldBe_one, '1')
-  })
-
-  it('Should call the quickDeploy function', async () => {
-    const res = await DeployMod.quickDeploy(
-      contractWithConstructor,
-      'Test', [10],
-      web3, account
-    )
-
-    expect(res).to.have.property('receipt')
-    expect(res).to.have.property('extract')
-
-    const testContractInstance = new web3.eth.Contract(res.extract.ABI, res.receipt.contractAddress)
-    const shouldBe_one = await testContractInstance.methods.x().call()
-
-    assert.strictEqual(shouldBe_one, '1')
   })
 })
