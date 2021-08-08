@@ -8,7 +8,9 @@
     "test": "mocha -r ts-node/register tests/.test.ts --timeout 900000",
     "dev:start": "yarn run ts-node ./lib/server.ts",
     "dev:start_hr": "nodemon",
-    "chain": "node chain-fork.js"
+    "chain": "chmod +x ./.ganache.sh && ./.ganache.sh",
+    "chain:eth": "node chain-fork.js -eqw",
+    "chain:bsc": "node chain-fork.js -bqw"
   },
   "dependencies": {
     "cors": "^2.8.5",
