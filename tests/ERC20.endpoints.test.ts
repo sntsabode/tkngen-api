@@ -1,9 +1,8 @@
 /*
-yarn run mocha -r ts-node/register tests/ERC20.endpoints.tests.test.ts --timeout 9999999999
+yarn run mocha -r ts-node/register tests/ERC20.endpoints.test.ts --timeout 9999999999
 */
 import chai, { assert, expect } from 'chai'
 import chaiHttp from 'chai-http'
-import accounts from './__eth.accounts__'
 import { app } from '../lib/app'
 import { Web3Fac } from '../lib/web3'
 import Web3 from 'web3'
@@ -11,13 +10,17 @@ require('dotenv').config()
 
 chai.use(chaiHttp)
 
+const web3 = Web3Fac('MAINNET_FORK')
+
+const testAccount = web3.eth.accounts.create()
+
 //const account = accounts.account
 
 const server = chai.request(app).keepOpen()
 
 const testKovan = false
 const network = 'MAINNET_FORK'
-const privateKey = accounts.privateKey
+const privateKey = testAccount.privateKey
 
 function deployRouteAssertions(res: any) {
   expect(res).to.have.status(200)
@@ -56,6 +59,18 @@ async function interfaceWithDeployedTokenContract(
 }
 
 describe('ERC20 endpoints test suite', () => {
+  before(async () => {
+    const web3accounts = await web3.eth.getAccounts()
+
+    await web3.eth.sendTransaction({
+      from: web3accounts[0],
+      to: testAccount.address,
+      value: web3.utils.toWei('1'),
+      gas: 5000000,
+      gasPrice: 18e9
+    })
+  })
+
   it('Should call the /ERC-20/Standard endpoint', async () => {
     const [
       tokenName, tokenDecimals, tokenSymbol, totalSupply

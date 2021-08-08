@@ -1,12 +1,11 @@
 /*
-yarn run mocha -r ts-node/register tests/BEP20.endpoints.tests.test.ts --timeout 9999999999
+yarn run mocha -r ts-node/register tests/BEP20.endpoints.test.ts --timeout 9999999999
 */
 import chai, { assert, expect } from 'chai'
 import chaiHttp from 'chai-http'
 import { app } from '../lib/app'
 import { Web3Fac } from '../lib/web3'
 import Web3 from 'web3'
-import accounts from './__bsc.accounts__'
 
 chai.use(chaiHttp)
 
@@ -14,7 +13,11 @@ chai.use(chaiHttp)
 
 const server = chai.request(app).keepOpen()
 
-const privateKey = accounts.privateKey
+const web3 = Web3Fac('BINANCESMARTCHAIN_FORK')
+
+const testAccount = web3.eth.accounts.create()
+
+const privateKey = testAccount.privateKey
 
 function deployRouteAssertions(res: any) {
   expect(res).to.have.status(200)
@@ -53,6 +56,18 @@ async function interfaceWithDeployedTokenContract(
 }
 
 describe('BEP20 endpoints test suite', () => {
+  before(async () => {
+    const web3accounts = await web3.eth.getAccounts()
+
+    await web3.eth.sendTransaction({
+      from: web3accounts[0],
+      to: testAccount.address,
+      value: web3.utils.toWei('1'),
+      gas: 5000000,
+      gasPrice: 18e9
+    })
+  })
+
   it('Should call the /BEP-20/MintableBurnable endpoint', async () => {
     const [
       tokenName, tokenDecimals, tokenSymbol, totalSupply
@@ -67,7 +82,7 @@ describe('BEP20 endpoints test suite', () => {
     deployRouteAssertions(res)
     
     const [name, sym, decimals] = await interfaceWithDeployedTokenContract(
-      res, Web3Fac('BINANCESMARTCHAIN_FORK')
+      res, web3
     )
 
     assert.strictEqual(name, tokenName)
@@ -89,7 +104,7 @@ describe('BEP20 endpoints test suite', () => {
     deployRouteAssertions(res)
     
     const [name, sym, decimals] = await interfaceWithDeployedTokenContract(
-      res, Web3Fac('BINANCESMARTCHAIN_FORK')
+      res, web3
     )
 
     assert.strictEqual(name, tokenName)
