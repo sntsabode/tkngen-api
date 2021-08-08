@@ -3,10 +3,10 @@
 BootGanacheAndRunTests () {
   for (( ; ; ))
   do
-    echo "Booting Ganache instances"
+    echo "Running Tests"
     echo
  
-    (yarn run chain) & (sleep 10s && yarn run test)
+    (yarn run chain) & (sleep 10s && yarn run tests)
 
     sleep 10000
   done
