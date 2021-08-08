@@ -39,7 +39,7 @@ const argv = yargs
 const BSC_NODE_URL = process.env.BNSC_NODE_URL
 const ETH_NODE_URL = process.env.ETH_NODE_URL
 
-const spawnGanache = (args) => spawn('node', ['./ganache.js', ...args], {
+const spawnGanache = (args) => spawn('yarn', ['run', 'ganache-cli', ...args], {
   stdio: 'inherit',
   cwd: process.cwd()
 })
@@ -54,8 +54,8 @@ const bootInstanceWithFork = async (BSC, ETH, q) => {
     ? '-q'
     : ''
 
-  if (BSC) return spawnGanache(['--fork', BSC_NODE_URL, '--port', 7545, quiet])
-  else if (ETH) return spawnGanache(['--fork', ETH_NODE_URL, '--port', 8545, quiet])
+  if (BSC) return spawnGanache(['--fork', BSC_NODE_URL, '--port', 8545, quiet])
+  else if (ETH) return spawnGanache(['--fork', ETH_NODE_URL, '--port', 7545, quiet])
 }
 
 /**

@@ -6,7 +6,7 @@ BootGanacheInstances () {
     echo "Booting Ganache instances"
     echo
 
-    node chain-fork.js -eqw & node chain-fork.js -bqw
+    node .ganache.js -eqw & node .ganache.js -bqw
 
     sleep 10000
   done
