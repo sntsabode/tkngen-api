@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "test": "chmod +x ./.test.sh && ./.test.sh",
+    "test:gha": "chmod +x ./.github-actions.sh && ./.github-actions.sh",
     "tests": "mocha -r ts-node/register tests/.test.ts --timeout 900000",
     "dev:start": "yarn run ts-node ./lib/server.ts",
     "dev:start_hr": "nodemon",
