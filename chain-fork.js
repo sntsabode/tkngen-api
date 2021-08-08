@@ -17,6 +17,12 @@ const argv = yargs
     default: false,
     type: 'boolean'
   })
+  .option('quiet', {
+    alias: 'q',
+    describe: 'Run ganache in quiet mode',
+    default: false,
+    type: 'boolean'
+  })
   .option('work', {
     alias: 'w',
     describe: 'Confirm run',
@@ -35,10 +41,15 @@ const spawnGanache = (args) => spawn('node', ['./ganache.js', ...args], {
 /**
  * @param {boolean} BSC 
  * @param {boolean} ETH 
+ * @param {boolean} q
  */
-const bootInstance = async (BSC, ETH) => {
-  if (BSC) return spawnGanache(['--fork', BSC_NODE_URL, '--port', '7545'])
-  else if (ETH) return spawnGanache(['--fork', ETH_NODE_URL, '--port', '8545'])
+const bootInstance = async (BSC, ETH, q) => {
+  const quiet = q
+    ? '-q'
+    : ''
+
+  if (BSC) return spawnGanache(['--fork', BSC_NODE_URL, '--port', '7545', quiet])
+  else if (ETH) return spawnGanache(['--fork', ETH_NODE_URL, '--port', '8545', quiet])
 
   let [NODE_URL, PORT] = BSC
     ? [BSC_NODE_URL, 8545]
@@ -53,10 +64,13 @@ const bootInstance = async (BSC, ETH) => {
 }
 
 if (argv.work) {
-  (async () => {
-    console.log('working')
-    await bootInstance(argv.BSC, argv.ETH)
-  })().then(() => console.log('Finished'))
+  bootInstance(argv.BSC, argv.ETH, argv.quiet).then(
+    () => setImmediate(() => process.exit(0)),
+    e => {
+      console.error(e)
+      process.exit(1)
+    }
+  )
 }
 
 module.exports = {
