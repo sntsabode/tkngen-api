@@ -36,5 +36,5 @@ const NODE_URLs: {
 })()
 
 export const Web3Fac = (instance: SupportedNetwork): Web3 => new Web3(
-  new Web3.providers.WebsocketProvider(NODE_URLs[instance])
+  new Web3.providers.HttpProvider(NODE_URLs[instance])
 )
