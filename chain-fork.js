@@ -23,6 +23,12 @@ const argv = yargs
     default: false,
     type: 'boolean'
   })
+  .option('no_fork', {
+    alias: 'nf',
+    describe: 'Boot ganache without forks',
+    default: false,
+    type: 'boolean'
+  })
   .option('work', {
     alias: 'w',
     describe: 'Confirm run',
@@ -43,36 +49,49 @@ const spawnGanache = (args) => spawn('node', ['./ganache.js', ...args], {
  * @param {boolean} ETH 
  * @param {boolean} q
  */
-const bootInstance = async (BSC, ETH, q) => {
+const bootInstanceWithFork = async (BSC, ETH, q) => {
   const quiet = q
     ? '-q'
     : ''
 
-  if (BSC) return spawnGanache(['--fork', BSC_NODE_URL, '--port', '7545', quiet])
-  else if (ETH) return spawnGanache(['--fork', ETH_NODE_URL, '--port', '8545', quiet])
-
-  let [NODE_URL, PORT] = BSC
-    ? [BSC_NODE_URL, 8545]
-    : [ETH_NODE_URL, 7545]
-
-  const childProcess = spawnGanache(['--fork', NODE_URL, '--port', PORT])
-
-  return new Promise((resolve, reject) => {
-    childProcess.on('error', (err) => reject(err))
-    childProcess.on('close', (code, signal) => resolve({ code, signal }))
-  })
+  if (BSC) return spawnGanache(['--fork', BSC_NODE_URL, '--port', 7545, quiet])
+  else if (ETH) return spawnGanache(['--fork', ETH_NODE_URL, '--port', 8545, quiet])
 }
 
-if (argv.work) {
-  bootInstance(argv.BSC, argv.ETH, argv.quiet).then(
-    () => setImmediate(() => process.exit(0)),
-    e => {
-      console.error(e)
-      process.exit(1)
-    }
-  )
+/**
+ * 
+ * @param {boolean} BSC 
+ * @param {boolean} ETH 
+ * @param {boolean} q 
+ */
+const bootInstanceWithoutFork = async (BSC, ETH, q) => {
+  const quiet = q
+    ? '-q'
+    : ''
+
+  if (BSC) return spawnGanache(['--port', 7545, quiet])
+  else if (ETH) return spawnGanache(['--port', 8545, quiet])
 }
+
+const arg = (argv.BSC || argv.ETH)
+if (argv.work && arg && !argv.no_fork)
+bootInstanceWithFork(argv.BSC, argv.ETH, argv.quiet).then(
+  () => setImmediate(() => process.exit(0)),
+  e => {
+    console.error(e)
+    process.exit(1)
+  }
+)
+
+if (argv.work && arg && argv.no_fork)
+bootInstanceWithoutFork(argv.BSC, argv.ETH, argv.quiet).then(
+  () => setImmediate(() => process.exit(0)),
+  e => {
+    console.error(e)
+    process.exit(1)
+  }
+)
 
 module.exports = {
-  bootInstance, spawnGanache
+  bootInstanceWithFork, spawnGanache
 }
