@@ -18,6 +18,7 @@ const web3 = Web3Fac('BINANCESMARTCHAIN_FORK')
 const testAccount = web3.eth.accounts.create()
 
 const privateKey = testAccount.privateKey
+const network = 'BINANCESMARTCHAIN_FORK'
 
 function deployRouteAssertions(res: any) {
   expect(res).to.have.status(200)
@@ -68,15 +69,15 @@ describe('BEP20 endpoints test suite', () => {
     })
   })
 
-  it('Should call the /BEP-20/MintableBurnable endpoint', async () => {
+  it('Should call the /BEP-20/Standard endpoint', async () => {
     const [
       tokenName, tokenDecimals, tokenSymbol, totalSupply
-    ] = ['TestBurnableTokenv3', 6, 'TV3', 100000]
+    ] = ['PoiToken', 6, 'POI', 100000]
 
-    const res = await server.post('/BEP-20/MintableBurnable').type('form')
+    const res = await server.post('/BEP-20/Standard').type('form')
     .send({
       tokenName, tokenDecimals, tokenSymbol,
-      totalSupply, privateKey, network: 'BINANCESMARTCHAIN_FORK'
+      totalSupply, privateKey, network
     })
 
     deployRouteAssertions(res)
@@ -89,16 +90,64 @@ describe('BEP20 endpoints test suite', () => {
     assert.strictEqual(sym, tokenSymbol)
     assert.strictEqual(decimals, tokenDecimals.toString())
   })
-  
-  it('Should call the /BEP-20/Standard endpoint', async () => {
+
+  it('Should call the /BEP-20/Mintable endpoint', async () => {
+    const [
+      tokenName, tokenSymbol, tokenDecimals, totalSupply
+    ] = ['TestMintable', 'TMT', 6, 1000000]
+
+    const res = await server.post('/BEP-20/Mintable').type('form')
+    .send({
+      tokenName, tokenSymbol, tokenDecimals,
+      totalSupply, privateKey, network
+    })
+
+    deployRouteAssertions(res)
+
+    deployRouteAssertions(res)
+    const [name, sym, decimals] = await interfaceWithDeployedTokenContract(
+      res,
+      web3
+    )
+
+    assert.strictEqual(tokenName, name)
+    assert.strictEqual(sym, tokenSymbol)
+    assert.strictEqual(decimals, tokenDecimals.toString())
+  })
+
+  it('Should call the /BEP-20/Burnable endpoint', async () => {
+    const [
+      tokenName, tokenSymbol, tokenDecimals, totalSupply
+    ] = ['TestBurnable', 'TBT', 6, 1000000]
+
+    const res = await server.post('/BEP-20/Burnable').type('form')
+    .send({
+      tokenName, tokenSymbol, tokenDecimals,
+      totalSupply, privateKey, network
+    })
+
+    deployRouteAssertions(res)
+
+    deployRouteAssertions(res)
+    const [name, sym, decimals] = await interfaceWithDeployedTokenContract(
+      res,
+      web3
+    )
+
+    assert.strictEqual(tokenName, name)
+    assert.strictEqual(sym, tokenSymbol)
+    assert.strictEqual(decimals, tokenDecimals.toString())
+  })
+
+  it('Should call the /BEP-20/MintableBurnable endpoint', async () => {
     const [
       tokenName, tokenDecimals, tokenSymbol, totalSupply
-    ] = ['PoiToken', 6, 'POI', 100000]
+    ] = ['TestBurnableTokenv3', 6, 'TV3', 100000]
 
-    const res = await server.post('/BEP-20/Standard').type('form')
+    const res = await server.post('/BEP-20/MintableBurnable').type('form')
     .send({
       tokenName, tokenDecimals, tokenSymbol,
-      totalSupply, privateKey, network: 'BINANCESMARTCHAIN_FORK'
+      totalSupply, privateKey, network
     })
 
     deployRouteAssertions(res)
