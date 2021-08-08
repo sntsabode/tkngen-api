@@ -10,6 +10,7 @@
     "dev:start": "yarn run ts-node ./lib/server.ts",
     "dev:start_hr": "nodemon",
     "chain": "chmod +x ./.ganache-fork.sh && ./.ganache-fork.sh",
+    "chain:no_fork": "chmod +x ./.ganache-nofork.sh && ./.ganache-nofork.sh",
     "chain:eth": "node chain-fork.js -eqw",
     "chain:bsc": "node chain-fork.js -bqw"
   },
