@@ -16,10 +16,10 @@ then
 
   for (( ; ; ))
   do
-    echo "Running tests."
+    echo "Running testsuite."
     echo
 
-    (yarn run chain) & (sleep 10s && yarn run tests)
+    (yarn run chain) & (sleep 10s && yarn run testsuite)
 
     sleep 10000
   done
@@ -45,7 +45,7 @@ then
     echo "Running Tests"
     echo
 
-    (yarn run chain:fork) & (sleep 10s && yarn run tests)
+    (yarn run chain:fork) & (sleep 10s && yarn run testsuite)
 
     sleep 10000
   done
@@ -61,7 +61,7 @@ then
     echo "Running Tests"
     echo
 
-    (yarn run chain) & (sleep 10s && yarn run tests)
+    (yarn run chain) & (sleep 10s && yarn run testsuite)
 
     sleep 10000
   done
