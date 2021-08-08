@@ -42,49 +42,49 @@ describe('tkngen-api server test suite', () => {
 
       expect(res).to.have.status(400)
     })
-  })
-
-  it('Should call the endpoint with a tokenName with special characters', async () => {
-    const [
-      tokenName, tokenDecimals, tokenSymbol, totalSupply
-    ] = ['TestERC&***20', 18, 'ERT', 10000]
-
-    const requestBody = {
-      tokenName, tokenDecimals, tokenSymbol,
-      totalSupply, privateKey, network: 'MAINNET_FORK'
-    }
-
-    const res = await server.post('/ERC-20/Standard').type('form')
-    .send(requestBody)
-
-    expect(res.body).to.have.property('success')
-    expect(res.body).to.have.property('err')
-    expect(res.body.err).to.have.property('errors')
-    assert.isArray(res.body.err.errors)
-    assert.isNotEmpty(res.body.err.errors)
-
-    expect(res).to.have.status(400)
-  })
-
-  it('Should call the endpoint with a tokenSymbol with special characters', async () => {
-    const [
-      tokenName, tokenDecimals, tokenSymbol, totalSupply
-    ] = ['TestERC20', 18, 'E**T', 10000]
-
-    const requestBody = {
-      tokenName, tokenDecimals, tokenSymbol,
-      totalSupply, privateKey, network: 'MAINNET_FORK'
-    }
-
-    const res = await server.post('/ERC-20/Standard').type('form')
-    .send(requestBody)
-
-    expect(res.body).to.have.property('success')
-    expect(res.body).to.have.property('err')
-    expect(res.body.err).to.have.property('errors')
-    assert.isArray(res.body.err.errors)
-    assert.isNotEmpty(res.body.err.errors)
-
-    expect(res).to.have.status(400)
+  
+    it('Should call the endpoint with a tokenName with special characters', async () => {
+      const [
+        tokenName, tokenDecimals, tokenSymbol, totalSupply
+      ] = ['TestERC&***20', 18, 'ERT', 10000]
+  
+      const requestBody = {
+        tokenName, tokenDecimals, tokenSymbol,
+        totalSupply, privateKey, network: 'MAINNET_FORK'
+      }
+  
+      const res = await server.post('/ERC-20/Standard').type('form')
+      .send(requestBody)
+  
+      expect(res.body).to.have.property('success')
+      expect(res.body).to.have.property('err')
+      expect(res.body.err).to.have.property('errors')
+      assert.isArray(res.body.err.errors)
+      assert.isNotEmpty(res.body.err.errors)
+  
+      expect(res).to.have.status(400)
+    })
+  
+    it('Should call the endpoint with a tokenSymbol with special characters', async () => {
+      const [
+        tokenName, tokenDecimals, tokenSymbol, totalSupply
+      ] = ['TestERC20', 18, 'E**T', 10000]
+  
+      const requestBody = {
+        tokenName, tokenDecimals, tokenSymbol,
+        totalSupply, privateKey, network: 'MAINNET_FORK'
+      }
+  
+      const res = await server.post('/ERC-20/Standard').type('form')
+      .send(requestBody)
+  
+      expect(res.body).to.have.property('success')
+      expect(res.body).to.have.property('err')
+      expect(res.body.err).to.have.property('errors')
+      assert.isArray(res.body.err.errors)
+      assert.isNotEmpty(res.body.err.errors)
+  
+      expect(res).to.have.status(400)
+    })
   })
 })
