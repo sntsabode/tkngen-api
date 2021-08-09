@@ -36,7 +36,7 @@ const argv = yargs
     type: 'boolean'
   }).argv
 
-const BSC_NODE_URL = process.env.BNSC_NODE_URL
+const BSC_NODE_URL = process.env.BSC_NODE_URL
 const ETH_NODE_URL = process.env.ETH_NODE_URL
 
 const spawnGanache = (args) => spawn('yarn', ['run', 'ganache-cli', ...args], {
