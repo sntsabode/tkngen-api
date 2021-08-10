@@ -58,8 +58,15 @@ export const RouteEntryPoint = (
 ) => Route(req, res, tokenContractFac(
   tokenType, contractType
 ), nets, tokenType, (acc, reqb, web3) => web3.eth.abi.encodeParameters(
-  ['string memory', 'string memory', 'uint8', 'uint256'],
-  [reqb.tokenName, reqb.tokenSymbol, reqb.tokenDecimals, reqb.totalSupply]
+  [
+    'string memory', 'string memory', 'uint8', 'uint256'
+  ],
+  [
+    reqb.tokenName, reqb.tokenSymbol, reqb.tokenDecimals,
+    convertToWei(reqb.totalSupply.toString(), 
+      reqb.tokenDecimals.toString() as SupportedDecimals
+    )
+  ]
 ).slice(2))
 
 export async function Route(
