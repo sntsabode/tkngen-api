@@ -12,10 +12,10 @@ function NoSpecialCharsValidation(
 }
 
 function AssertPrivateKeyLength(
-  input: string, meta: Meta
+  input: string
 ) {
-  if (input.length !== 66)
-    throw new Error('Private Key has to be 66 chars long: ' + meta.path)
+  if (input.length !== 64 && input.length !== 66)
+    throw new Error('Private Key has to be 64 or 66 chars long.')
   
   return true
 }
