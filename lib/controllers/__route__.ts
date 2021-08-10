@@ -31,42 +31,9 @@ const ContractMap = {
   BEP20, ERC20
 }
 
-export const RouteEntryPoint = (
-  tokenType: 'ERC20' | 'BEP20',
-  contractType:
-    | 'Mintable'
-    | 'Burnable'
-    | 'MintableBurnable',
-  nets: SupportedNetwork[]
-): (req: req, res: res) => Promise<res> => (
-  req: req, res: res
-) => RouteEntryPoint_(
-  req, res, tokenType, contractType, nets,
-  (acc, reqb, web3) => web3.eth.abi.encodeParameters(
-    ['string memory', 'string memory', 'uint8', 'uint256'],
-    [reqb.tokenName, reqb.tokenSymbol, reqb.tokenDecimals, reqb.totalSupply]
-  ).slice(2)
-)
-
-export const RouteEntryPoint_ = (
-  req: req,
-  res: res,
-  tokenType: 'ERC20' | 'BEP20',
-  which: TokenType,
-  nets: SupportedNetwork[],
-  paramFunc?: (account: Account, req: IRequestBody, web3: Web3) => string
-): Promise<res> => Route(req, res, tokenContractFac(
-    tokenType, which
-  ), nets, tokenType, paramFunc
-)
-
 export const tokenContractFac = (
   tokenType: 'BEP20' | 'ERC20',
-  which:
-    | 'MintableBurnable'
-    | 'Mintable'
-    | 'Burnable'
-    | 'Standard'
+  which: TokenType
 ): IContract => (
   solver: string,
   tokenName: string,
@@ -78,6 +45,22 @@ export const tokenContractFac = (
     (tokenDecimals.toString() as SupportedDecimals)
   ).toString()
 )
+
+export const RouteEntryPoint = (
+  tokenType: 'ERC20' | 'BEP20',
+  contractType:
+    | 'Mintable'
+    | 'Burnable'
+    | 'MintableBurnable',
+  nets: SupportedNetwork[]
+): (req: req, res: res) => Promise<res> => (
+  req: req, res: res
+) => Route(req, res, tokenContractFac(
+  tokenType, contractType
+), nets, tokenType, (acc, reqb, web3) => web3.eth.abi.encodeParameters(
+  ['string memory', 'string memory', 'uint8', 'uint256'],
+  [reqb.tokenName, reqb.tokenSymbol, reqb.tokenDecimals, reqb.totalSupply]
+).slice(2))
 
 export async function Route(
   req: req,
@@ -141,10 +124,11 @@ export async function RouteHandler(
       }
     })
   } catch (e) {
-    console.error(e.message)
+    console.error(e)
     return res.status(500).send({
       success: false,
-      msg: `Failed to deploy your ${tokenType} contract. Internal Error.`
+      msg: `Failed to deploy your ${tokenType} contract. Internal Error.`,
+      e: e.message ? e.message : null
     })
   }
 }

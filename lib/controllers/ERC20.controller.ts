@@ -3,13 +3,13 @@ import {
   Response as res
 } from 'express'
 import { Networks } from './__networks__'
-import { RouteEntryPoint, RouteEntryPoint_ } from './__route__'
+import { RouteEntryPoint, Route, tokenContractFac } from './__route__'
 
 export const StandardERC20Route = (
   req: req, res: res
-): Promise<res> => RouteEntryPoint_(
-  req, res, 'ERC20', 'Standard', Networks.ERC20
-)
+): Promise<res> => Route(req, res, tokenContractFac(
+  'ERC20', 'Standard'
+), Networks.ERC20, 'ERC20')
 
 export const MintableERC20Route = (
   req: req, res: res

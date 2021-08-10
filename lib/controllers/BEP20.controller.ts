@@ -2,14 +2,14 @@ import {
   Request as req,
   Response as res
 } from 'express'
-import { RouteEntryPoint, RouteEntryPoint_ } from './__route__'
+import { RouteEntryPoint, Route, tokenContractFac } from './__route__'
 import { Networks } from './__networks__'
 
 export const StandardBEP20Route = (
   req: req, res: res
-): Promise<res> => RouteEntryPoint_(
-  req, res, 'BEP20', 'Standard', Networks.BEP20
-)
+): Promise<res> => Route(req, res, tokenContractFac(
+  'BEP20', 'Standard'
+), Networks.BEP20, 'BEP20')
 
 export const MintableBEP20Route = (
   req: req, res: res
