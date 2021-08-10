@@ -69,8 +69,8 @@ const bootInstanceWithoutFork = async (BSC, ETH, q) => {
     ? '-q'
     : ''
 
-  if (BSC) return spawnGanache(['--port', 7545, quiet])
-  else if (ETH) return spawnGanache(['--port', 8545, quiet])
+  if (BSC) return spawnGanache(['--port', 8545, quiet])
+  else if (ETH) return spawnGanache(['--port', 7545, quiet])
 }
 
 const arg = (argv.BSC || argv.ETH)
