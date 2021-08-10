@@ -109,7 +109,7 @@ export async function RouteHandler(
 
     return res.status(200).send({
       success: true,
-      msg: `Successfuly deployed your ${tokenType} Token!`,
+      msg: `Successfully deployed your ${tokenType} Token!`,
       data: {
         receipt: (await signAndSendTransaction({
           from: account.address,
