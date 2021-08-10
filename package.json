@@ -5,6 +5,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "start": "node ./dist/lib/server.js",
+    "start:build": "tsc && node ./dist/lib/server.js",
+    "build": "tsc",
     "test": "chmod +x ./.test.sh && ./.test.sh",
     "test:gha": "chmod +x ./.github-actions.sh && ./.github-actions.sh",
     "testsuite": "mocha -r ts-node/register tests/.test.ts --timeout 900000",
@@ -13,8 +16,8 @@
     "dev:start_hr": "nodemon",
     "chain:fork": "chmod +x ./.ganache/.ganache_fork.sh && ./.ganache/.ganache_fork.sh",
     "chain": "chmod +x ./.ganache/.ganache_nofork.sh && ./.ganache/.ganache_nofork.sh",
-    "chain:bsc": "chmod +x ./.ganache/.ganache_bsc.sh && ./.ganache/.ganache_bsc.sh",
-    "chain:eth": "chmod +x ./.ganache/.ganache_eth.sh && ./.ganache/.ganache_eth.sh"
+    "chain:bsc": "chmod +x ./.ganache/.ganache_bsc.sh && ./.ganache/.ganache_bsc.sh --no_fork",
+    "chain:eth": "chmod +x ./.ganache/.ganache_eth.sh && ./.ganache/.ganache_eth.sh --no_fork"
   },
   "dependencies": {
     "cors": "^2.8.5",
