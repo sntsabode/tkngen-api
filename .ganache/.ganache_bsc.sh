@@ -7,7 +7,7 @@ then
     echo "Booting Ganache instances"
     echo
 
-    node ./.ganache/.ganache.js -bqw --no_fork
+    node ./.ganache/.ganache.js -bw --no_fork
 
     sleep 10000
   done
@@ -20,7 +20,7 @@ then
     echo "Booting Ganache instances"
     echo
 
-    node ./.ganache/.ganache.js -bqw
+    node ./.ganache/.ganache.js -bw
 
     sleep 10000
   done
@@ -33,7 +33,7 @@ then
     echo "Booting Ganache instances"
     echo
 
-    node ./.ganache/.ganache.js -bqw --no_fork
+    node ./.ganache/.ganache.js -bw --no_fork
 
     sleep 10000
   done
