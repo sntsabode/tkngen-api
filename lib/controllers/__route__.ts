@@ -84,7 +84,7 @@ export async function Route(
 
   if (!nets.includes(req.body.network)) return res.status(400).send({
     success: false,
-    msg: 'You\'ve entered an unsupported network'
+    e: 'You\'ve entered an unsupported network'
   })
 
   return RouteHandler(req.body, res, constructSolcInputs(
