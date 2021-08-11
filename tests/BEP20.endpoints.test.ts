@@ -9,8 +9,6 @@ import Web3 from 'web3'
 
 chai.use(chaiHttp)
 
-//const account = accounts.account
-
 const server = chai.request(app).keepOpen()
 
 const web3 = Web3Fac('BINANCESMARTCHAIN_FORK')
