@@ -10,6 +10,9 @@
   <a href="https://circleci.com/gh/sntsabode/tkngen-api/tree/master">
     <img alt="CircleCI" src="https://circleci.com/gh/sntsabode/tkngen-api/tree/master.svg?style=svg"/>
   </a>
+  <a href='https://coveralls.io/github/sntsabode/tkngen-api'>
+    <img src='https://coveralls.io/repos/github/sntsabode/tkngen-api/badge.svg' alt='Coverage Status'/>
+  </a>
 </p>
 
 tkngen-api. A RESTFUL API to deploy ERC20 / BEP20 tokens.
