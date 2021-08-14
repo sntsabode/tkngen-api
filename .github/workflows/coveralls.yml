@@ -1,0 +1,37 @@
+name: tkngen-api
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    env:
+      # just so the server doesn't throw an error
+      ETH_NODE_URL: "https://"
+      # just so the server doesn't throw an error
+      ETH_NODE_URL_KOVAN: "https://"
+      BSC_NODE_URL: "https://bsc-dataseed1.binance.org"
+      BSC_TEST_NODE_URL: "https://data-seed-prebsc-1-s1.binance.org:8545"
+
+      # So the "FORK" networks are available
+      LOCAL_INSTANCE: "local"
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        # cache: 'npm'
+    - run: yarn install --frozen-lockfile
+    - run: yarn run test:coveralls:ci
