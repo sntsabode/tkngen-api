@@ -7,6 +7,9 @@
   <a href="https://github.com/sntsabode/tkngen-api/actions/workflows/linux.test.yml">
     <img alt="Github Actions" src="https://github.com/sntsabode/tkngen-api/actions/workflows/linux.test.yml/badge.svg"/>
   </a>
+  <a href="https://circleci.com/gh/sntsabode/tkngen-api/tree/master">
+    <img alt="CircleCI" src="https://circleci.com/gh/sntsabode/tkngen-api/tree/master.svg?style=svg"/>
+  </a>
 </p>
 
 tkngen-api. A RESTFUL API to deploy ERC20 / BEP20 tokens.
