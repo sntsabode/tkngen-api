@@ -13,6 +13,7 @@
     "testsuite": "mocha -r ts-node/register tests/.test.ts --timeout 900000",
     "test:coverage": "nyc mocha -r ts-node/register tests/.test.ts --timeout 900000",
     "test:coveralls": "nyc mocha -r ts-node/register tests/.test.ts --timeout 900000 && nyc report --reporter=text-lcov | coveralls",
+    "test:coveralls:ci": "chmod +x ./.coveralls.sh && ./.coveralls.sh",
     "dev:start": "yarn run ts-node ./lib/server.ts",
     "dev:start_hr": "nodemon",
     "chain:fork": "chmod +x ./.ganache/.ganache_fork.sh && ./.ganache/.ganache_fork.sh",
