@@ -5,6 +5,10 @@ import { RequestValidation } from './controllers/__req.validation__'
 
 const router = Router()
 
+router.get('/', async (req, res) => {
+  return res.status(200).send('tkngen-api')
+})
+
 router.get('/ping', async (req, res) => {
   return res.status(200).send('ping')
 })
