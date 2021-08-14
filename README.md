@@ -131,7 +131,7 @@ fetch('https://tkngen-api.herokuapp.com/BEP-20/MintableBurnable', {
   method: 'POST',
   body: JSON.stringify(requestBody),
   headers: { 'Content-Type': 'application/json' }
-}).then(res => res.json())
+}).then(res => res.text())
   .then(body => console.log(body))
 ```
 
