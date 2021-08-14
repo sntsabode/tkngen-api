@@ -9,7 +9,7 @@
     "start:build": "tsc && node ./dist/lib/server.js",
     "build": "tsc",
     "test": "chmod +x ./.test.sh && ./.test.sh",
-    "test:gha": "chmod +x ./.github-actions.sh && ./.github-actions.sh",
+    "test:ci": "chmod +x ./.ci-actions.sh && ./.ci-actions.sh",
     "testsuite": "mocha -r ts-node/register tests/.test.ts --timeout 900000",
     "test:coverage": "nyc mocha -r ts-node/register tests/.test.ts --timeout 900000",
     "test:coveralls": "nyc mocha -r ts-node/register tests/.test.ts --timeout 900000 && nyc report --reporter=text-lcov | coveralls",
