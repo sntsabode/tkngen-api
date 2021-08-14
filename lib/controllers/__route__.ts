@@ -135,7 +135,12 @@ export async function RouteHandler(
     return res.status(500).send({
       success: false,
       msg: `Failed to deploy your ${tokenType} contract. Internal Error.`,
-      e: e.message ? e.message : null
+      e: e.message ? (() => {
+        if (e.message.includes('infura.io/v3'))
+          return 'Internal error'
+        
+        return e.message
+      })() : null
     })
   }
 }
