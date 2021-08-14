@@ -63,4 +63,10 @@ router.post(
   BEP20Controllers.MintableBurnableBEP20Route
 )
 
+//////////////////////////////////////////////////
+
+router.get('*', (req, res) => {
+  res.redirect('/')
+})
+
 export { router }
