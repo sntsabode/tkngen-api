@@ -37,8 +37,7 @@ If you wish to deploy to mainnet, it's recommended you build locally and use you
 #### `https://tkngen-api.herokuapp.com/`
 
 ##### `POST`
-
-<br/>
+* * *
 
 ##### `ERC20`
 
