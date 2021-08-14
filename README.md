@@ -18,7 +18,7 @@ Deployable Token Types are:
 * Burnable
 * MintableBurnable
 
-The only difference between these token contracts and the ones you'll find at [@OpenZeppelin]() are that these ones omit the `ERC20Capped` implementation.
+The only difference between these token contracts and the ones you'll find at [@OpenZeppelin](https://github.com/OpenZeppelin) are that these ones omit the `ERC20Capped` implementation.
 
 If you wish for this behaviour, you're more than welcome to implement it in your contract before deploying by forking and building locally.
 
@@ -31,6 +31,8 @@ If you wish to deploy to mainnet, it's recommended you build locally and use you
 #### `https://tkngen-api.herokuapp.com/`
 
 ##### `POST`
+
+<br/>
 
 ##### `ERC20`
 
@@ -120,7 +122,7 @@ const requestBody = {
   tokenSymbol: 'TST',
   totalSupply: 100000,
   privateKey: 'pvtk'
-  network: ''
+  network: 'BINANCESMARTCHAIN_TEST'
 }
 
 fetch('https://tkngen-api.herokuapp.com/BEP-20/MintableBurnable', {
