@@ -10,6 +10,16 @@ function NoSpecialCharsValidation(
 
   return true
 }
+// Can probably make this assertion in the regex
+// test above, but... 
+function DoesnotBeginWithNumber(
+  input: string, meta: Meta
+) {
+  if (!isNaN(parseFloat(input.charAt(0))))
+    throw new Error('Cannot begin with a number: ' + meta.path)
+
+  return true
+}
 
 function AssertPrivateKeyLength(
   input: string
@@ -25,6 +35,7 @@ export const RequestValidation = [
     .isString()
     .escape()
     .trim()
+    .custom(DoesnotBeginWithNumber)
     .custom(NoSpecialCharsValidation),
 
   validate('tokenDecimals', 'Invalid token decimals')
@@ -36,6 +47,7 @@ export const RequestValidation = [
     .isString()
     .escape()
     .trim()
+    .custom(DoesnotBeginWithNumber)
     .custom(NoSpecialCharsValidation),
 
   validate('totalSupply', 'Invalid total supply')
