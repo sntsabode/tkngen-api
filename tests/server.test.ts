@@ -64,6 +64,28 @@ describe('tkngen-api server test suite', () => {
   
       expect(res).to.have.status(400)
     })
+
+    it('Should call the endpoint with a tokenName and tokenSymbol beginning with a number', async () => {
+      const [
+        tokenName, tokenDecimals, tokenSymbol, totalSupply
+      ] = ['2TestERC20', 18, '2ERT', 10000]
+
+      const requestBody = {
+        tokenName, tokenDecimals, tokenSymbol,
+        totalSupply, privateKey, network: 'MAINNET_FORK'
+      }
+  
+      const res = await server.post('/ERC-20/Standard').type('form')
+      .send(requestBody)
+  
+      expect(res.body).to.have.property('success')
+      expect(res.body).to.have.property('err')
+      expect(res.body.err).to.have.property('errors')
+      assert.isArray(res.body.err.errors)
+      assert.strictEqual(res.body.err.errors.length, 2)
+  
+      expect(res).to.have.status(400)
+    })
   
     it('Should call the endpoint with a tokenSymbol with special characters', async () => {
       const [
