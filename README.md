@@ -61,7 +61,7 @@ All routes conform to the same request body data structure:
 ```ts
 export interface IRequestBody {
   tokenName: string
-  tokenDecimals: number
+  tokenDecimals: number (6 | 8 | 12 | 18)
   tokenSymbol: string
   totalSupply: number
   privateKey: string
@@ -78,6 +78,8 @@ export type SupportedNetwork =
 ```
  
 Unfortunately your private key is needed to sign and send the transaction that deploys your token, hence using this api for mainnet deployments isn't recommended. If you do however wish to deploy to mainnet, it's recommended you build locally and use your local instance instead of the demo production build.
+
+***NB*** Please make sure the `totalSupply` parameter is not in wei (token decimals appended to amount). This is done internally by the server.
 
 ***NB*** The `totalSupply` parameter is used as the `_initialBalance` for the `Mintable`, `Burnable` and `MintableBurnable` contract implementations.
 
@@ -121,7 +123,7 @@ const requestBody = {
   tokenDecimals: 8,
   tokenSymbol: 'TST',
   totalSupply: 100000,
-  privateKey: 'pvtk'
+  privateKey: 'pvtk',
   network: 'BINANCESMARTCHAIN_TEST'
 }
 
